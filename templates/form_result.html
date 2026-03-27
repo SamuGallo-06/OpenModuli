@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ form_attributes.get('title', form_name) }}</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    </head>
+
+    <body>
+        <main class="container">
+            {% if pdf_result and pdf_result.success %}
+            <div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+                <strong>✓ Modulo inviato con successo!</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.95em;">
+                    Il PDF è stato generato: <code style="background-color: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">{{ pdf_result.pdf_filename }}</code>
+                </p>
+            </div>
+            {% elif pdf_result and not pdf_result.success %}
+            <div class="error-message" style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+                <strong>⚠ Errore nella generazione del PDF</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.95em;">{{ pdf_result.error }}</p>
+            </div>
+            {% endif %}
+            <a href="{{ pdf_result.pdf_url }}" target="_blank"><button type="button">Scarica PDF</button></a>
+        </main>
+        <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
+            <p>OpenModuli - Open Source Self-hosted forms</p>
+            <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
+        </footer>
+    </body>
+</html>

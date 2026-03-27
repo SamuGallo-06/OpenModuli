@@ -1,0 +1,5 @@
+<form title="Nuovo Modulo" submit_label="Invia">
+    <section title="Sezione">
+        <textfield name="nome" label="Nome" required="true" />
+    </section>
+</form>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pannello di Controllo - OpenModuli</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+        <main class="container">
+            <header>
+                <h1>Pannello di Controllo - OpenModuli</h1>
+            </header>
+
+            <div>
+                <h2>Moduli disponibili</h2>
+                <ul class="form-list">
+                    {% for form in forms %}
+                        <li>{{ form }} <a href="{{ url_for('form_view', form_name=form) }}"><button type="button">Visualizza</button><button class="btn_danger" type="button">Elimina</button></a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div>
+                <h2>Carica Modulo</h2>
+                <form method="POST" action="{{ url_for('upload_form') }}" enctype="multipart/form-data">
+                    <input type="file" name="fxml_file" required />
+                    <input type="text" name="name" placeholder="Nome modulo" required/>
+                    <button type="submit">Carica</button>
+                </form>
+            </div>
+
+            <div>
+                <h2>Editor Moduli</h2>
+                <a class="ui_button" href="{{ url_for('create_form') }}">Apri Editor FXML</a>
+            </div>
+
+            <div>
+                <h2>Impostazioni</h2>
+                <form>
+                    <span>Percorso dei moduli</span><input type="text" name="forms_path"/>
+                    <span>Percorso dei PDF</span><input type="text" name="pdf_path"/>
+                </form>
+            </div>
+
+            <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
+                <p>OpenModuli - Open Source Self-hosted forms</p>
+                <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
+            </footer>
+        </main>
+    </body>
+</html>

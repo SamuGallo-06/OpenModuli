@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OpenModuli - Nuovo Modulo</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='form_creator.css') }}" />
+    </head>
+
+    <body>
+        <main class="container creator-shell" data-initial-form="{{ form_name or '' }}">
+            <header class="creator-header">
+                <h1>Nuovo Modulo</h1>
+            </header>
+
+            <section class="creator-grid">
+                <aside class="creator-card creator-sidebar">
+                    <div class="creator-card-header">
+                        <h2>I Miei Moduli</h2>
+                        <button id="reload-forms" type="button">Aggiorna</button>
+                    </div>
+                    <ul id="form-list" class="form-list"></ul>
+                </aside>
+
+                <section class="creator-card creator-editor-wrap">
+                    <div class="creator-card-header">
+                        <h2 id="editor-mode-title">Editor Codice XML</h2>
+                        <button id="toggle-editor-mode" type="button">Passa a editor Visuale</button>
+                        <label class="name-input-wrap" for="form-name-input">
+                            Nome modulo
+                            <input id="form-name-input" type="text" placeholder="es. iscrizione_evento" value="{{ form_name or '' }}" />
+                        </label>
+                    </div>
+
+                    <div id="code-editor-pane" class="editor-pane">
+                        <textarea id="fxml-editor" class="fxml-editor" spellcheck="false" placeholder="Incolla o modifica qui il tuo FXML"></textarea>
+                    </div>
+
+                    <div id="visual-editor-pane" class="editor-pane is-hidden" aria-hidden="true">
+                        <div class="visual-form-settings">
+                            <label>
+                                Titolo form
+                                <input id="visual-form-title" type="text" placeholder="Titolo" />
+                            </label>
+                            <label>
+                                Testo pulsante invio
+                                <input id="visual-submit-label" type="text" placeholder="Invia" />
+                            </label>
+                            <label>
+                                Titolo sezione
+                                <input id="visual-section-title" type="text" placeholder="Nuova sezione" value="Sezione" />
+                            </label>
+                        </div>
+
+                        <div class="visual-add-toolbar">
+                            <button id="add-section" type="button">+ Sezione</button>
+                            <button id="add-root-pagebreak" type="button">+ Pagebreak</button>
+                        </div>
+
+                        <div id="visual-sections" class="visual-sections"></div>
+                    </div>
+                </section>
+            </section>
+
+            <footer class="creator-footer">
+                <section class="creator-footer-actions" aria-label="Azioni modulo">
+                    <button id="new-form" type="button">Nuovo</button>
+                    <button id="validate-form" type="button">Valida</button>
+                    <button id="save-form" type="button">Salva</button>
+                    <button id="preview-form" type="button">Anteprima</button>
+                </section>
+
+                <section class="creator-footer-logs" aria-label="Log editor">
+                    <p id="editor-status" class="editor-status" aria-live="polite"></p>
+                    <pre id="validation-output" class="validation-output">Nessuna validazione eseguita.</pre>
+                </section>
+            </footer>
+        </main>
+
+        <script src="{{ url_for('static', filename='form_creator.js') }}"></script>
+    </body>
+</html>
