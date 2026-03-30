@@ -3,6 +3,7 @@
     <head>
         <title>Pannello di Controllo - OpenModuli</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
     </head>
@@ -14,11 +15,18 @@
 
             <div>
                 <h2>Moduli disponibili</h2>
-                <ul class="form-list">
+                <div class="file-grid">
                     {% for form in forms %}
-                        <li>{{ form }} <a href="{{ url_for('form_view', form_name=form) }}"><button type="button">Visualizza</button><button class="btn_danger" type="button">Elimina</button></a></li>
+                        <div class="file-card">
+                            <div class="file-icon" aria-hidden="true">FXML</div>
+                            <span class="file-name">{{ form }}</span>
+                            <div class="file-actions">
+                                <a class="ui_button" href="{{ url_for('form_view', form_name=form) }}">Visualizza</a>
+                                <button class="btn_danger" type="button">Elimina</button>
+                            </div>
+                        </div>
                     {% endfor %}
-                </ul>
+                </div>
             </div>
 
             <div>

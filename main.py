@@ -31,10 +31,25 @@ def _form_path(form_name: str) -> str:
 
 @app.route("/")
 def index():
+    """_summary_
+    First page, shows a welcome message and links to the admin page.
+
+    Returns:
+        _type_: _description_
+    """
     return render_template("index.html")
 
 @app.route("/admin")
 def admin():
+    """_summary_
+    ## Admin page
+    This is the admin page
+    
+    - Form Manager: it lists all the available forms and allows to create new ones or upload existing ones.
+
+    Returns:
+        _type_: _description_
+    """
     forms = []
 
     for file in os.listdir("forms"):

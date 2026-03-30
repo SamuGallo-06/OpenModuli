@@ -1,0 +1,75 @@
+.file-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 190px);
+	gap: 16px;
+	padding: 12px 0;
+	justify-content: start;
+}
+
+.file-card {
+	width: 190px;
+	min-height: 190px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 14px 12px;
+	background: #ffffff;
+	border: 1px solid #dbe1ea;
+	border-radius: 10px;
+	text-align: center;
+}
+
+.file-card:hover {
+	background: #f9fbff;
+	border-color: #b8c8e6;
+}
+
+.file-icon {
+	width: 64px;
+	height: 64px;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.4px;
+	color: #1e3a8a;
+	background: #dbeafe;
+	border: 1px solid #bfdbfe;
+}
+
+.file-name {
+	font-size: 13px;
+	font-weight: 600;
+	color: #111827;
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+
+.file-actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.file-actions .ui_button,
+.file-actions button {
+	padding: 7px 10px;
+	font-size: 12px;
+}
+
+@media (max-width: 480px) {
+	.file-grid {
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	}
+
+	.file-card {
+		width: auto;
+		min-height: 170px;
+	}
+}
