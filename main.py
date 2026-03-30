@@ -10,7 +10,11 @@ from xmlutils import parse_fxml, extract_runtime_outputs
 from utils import _json_safe, _find_available_port
 from pdfutils import create_pdf_from_form_data, set_program_name
 
+from routes.server_controls import server_bp
+
 app = Flask(__name__)
+app.register_blueprint(server_bp)
+
 PROGRAM_NAME = "OpenModuli"
 FORM_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
