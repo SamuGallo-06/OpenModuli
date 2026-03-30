@@ -73,3 +73,110 @@
 		min-height: 170px;
 	}
 }
+
+.topbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-bottom: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.menu-item > button {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menu-item > button:hover {
+  background: #ddd;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 160px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px;
+  display: none;
+  z-index: 100;
+}
+
+.menu-item:hover .dropdown {
+  display: block;
+}
+
+.dropdown a {
+  display: block;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #222;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.dropdown a:hover {
+  background: #f0f0f0;
+}
+
+.dropdown hr {
+  margin: 4px 8px;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.menu-item > button {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #111; /* ← aggiungi questa riga */
+}
+
+.dropdown a {
+  display: block;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #111; /* ← già presente, verifica che non venga sovrascritto da style.css */
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.topbar .menu-item > button {
+  color: #111;
+}
+
+dialog {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 24px;
+  min-width: 280px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.16.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>OpenModuli: Related Pages</title>
+<title>OpenModuli: form_result</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -63,7 +63,7 @@ $(function() {
   </div>
 </div>
 <script type="text/javascript">
-$(function(){initNavTree('pages.html','',''); });
+$(function(){initNavTree('md_templates_2form__result.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -88,29 +88,17 @@ $(function(){initNavTree('pages.html','',''); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">Related Pages</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">form_result </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all related documentation pages:</div><div class="directory">
-<table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2index.html" target="_self">index</a></td><td class="desc"></td></tr>
-<tr id="row_1_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2md__FXML____SPEC.html" target="_self">md_FXML__SPEC</a></td><td class="desc"></td></tr>
-<tr id="row_2_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2namespacemembers.html" target="_self">namespacemembers</a></td><td class="desc"></td></tr>
-<tr id="row_3_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2namespacemembers__func.html" target="_self">namespacemembers_func</a></td><td class="desc"></td></tr>
-<tr id="row_4_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2namespacepdfutils.html" target="_self">namespacepdfutils</a></td><td class="desc"></td></tr>
-<tr id="row_5_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2namespaces.html" target="_self">namespaces</a></td><td class="desc"></td></tr>
-<tr id="row_6_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_docs_2html_2pages.html" target="_self">pages</a></td><td class="desc"></td></tr>
-<tr id="row_7_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_FXML__SPEC.html" target="_self">Specifica del formato <span class="tt">.fxml</span></a></td><td class="desc"></td></tr>
-<tr id="row_8_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_templates_2admin.html" target="_self">admin</a></td><td class="desc"></td></tr>
-<tr id="row_9_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_templates_2form__creator.html" target="_self">form_creator</a></td><td class="desc"></td></tr>
-<tr id="row_10_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_templates_2form__result.html" target="_self">form_result</a></td><td class="desc"></td></tr>
-<tr id="row_11_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_templates_2form__view.html" target="_self">form_view</a></td><td class="desc"></td></tr>
-<tr id="row_12_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_templates_2index.html" target="_self">index</a></td><td class="desc"></td></tr>
-<tr id="row_13_" class="odd"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="md_templates_2settings.html" target="_self">settings</a></td><td class="desc"></td></tr>
-</table>
-</div><!-- directory -->
-</div><!-- contents -->
+<div class="textblock"><p>&lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;{{ form_attributes.get('title', form_name) }}&lt;/title&gt; &lt;meta charset="UTF-8" &gt; &lt;meta name="viewport" content="width=device-width, initial-scale=1" &gt; &lt;link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" &gt; &lt;/head&gt;</p>
+<p style="margin: 8px 0 0 0; font-size: 0.95em;">&lt;body&gt; &lt;main class="container"&gt; {% if pdf_result and pdf_result.success %} </p><div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;"> <b>✓ Modulo inviato con successo!</b> </div><div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;"> Il PDF è stato generato: <code style="background-color: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 3px;">{{ pdf_result.pdf_filename }}</code> </div><div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;"> </div><p> {% elif pdf_result and not pdf_result.success %} </p><div class="error-message" style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;"> <b>⚠ Errore nella generazione del PDF</b> </div><div class="error-message" style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">{{ pdf_result.error }}</div><div class="error-message" style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;"> </div><p> {% endif %} <a href="{{ pdf_result.pdf_url }}" target="_blank">Scarica PDF</a> &lt;/main&gt; &lt;footer style="margin-top: 40px; font-size: 0.9em; color: #555;"&gt; </p>
+<p>OpenModuli - Open Source Self-hosted forms</p>
+<p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
+<p>&lt;/footer&gt; &lt;/body&gt; &lt;/html&gt; </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
 </div><!-- doc-content -->
 </div><!-- container -->
 <!-- start footer part -->

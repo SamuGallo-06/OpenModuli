@@ -25,39 +25,52 @@
 var NAVTREE =
 [
   [ "OpenModuli", "index.html", [
-    [ "Specifica del formato <span class=\"tt\">.fxml</span>", "md_FXML__SPEC.html", [
-      [ "Panoramica", "md_FXML__SPEC.html#autotoc_md2", null ],
-      [ "Struttura generale", "md_FXML__SPEC.html#autotoc_md4", null ],
-      [ "Elemento radice <span class=\"tt\">&lt;form&gt;</span>", "md_FXML__SPEC.html#autotoc_md6", null ],
-      [ "Blocco <span class=\"tt\">&lt;variables&gt;</span>", "md_FXML__SPEC.html#autotoc_md8", [
-        [ "Attributi di <span class=\"tt\">&lt;var&gt;</span>", "md_FXML__SPEC.html#autotoc_md9", null ],
-        [ "Variabili di sistema predefinite", "md_FXML__SPEC.html#autotoc_md10", null ],
-        [ "Tipi restituiti", "md_FXML__SPEC.html#autotoc_md11", null ]
+    [ "index", "md_docs_2html_2index.html", null ],
+    [ "md_FXML__SPEC", "md_docs_2html_2md__FXML____SPEC.html", [
+      [ "autotoc_md2", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md2", null ],
+      [ "autotoc_md4", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md4", null ],
+      [ "autotoc_md6", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md6", null ],
+      [ "autotoc_md8", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md8", [
+        [ "autotoc_md9", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md9", null ],
+        [ "autotoc_md10", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md10", null ],
+        [ "autotoc_md11", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md11", null ]
       ] ],
-      [ "Layout: <span class=\"tt\">&lt;section&gt;</span> e <span class=\"tt\">&lt;row&gt;</span>", "md_FXML__SPEC.html#autotoc_md13", [
-        [ "<span class=\"tt\">&lt;section&gt;</span>", "md_FXML__SPEC.html#autotoc_md14", null ],
-        [ "<span class=\"tt\">&lt;row&gt;</span>", "md_FXML__SPEC.html#autotoc_md15", null ]
+      [ "autotoc_md13", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md13", [
+        [ "autotoc_md14", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md14", null ],
+        [ "autotoc_md15", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md15", null ]
       ] ],
-      [ "Elemento <span class=\"tt\">&lt;text&gt;</span>", "md_FXML__SPEC.html#autotoc_md17", null ],
-      [ "Elemento <span class=\"tt\">&lt;printvar&gt;</span>", "md_FXML__SPEC.html#autotoc_md18", null ],
-      [ "Campi di input", "md_FXML__SPEC.html#autotoc_md20", [
-        [ "<span class=\"tt\">&lt;textfield&gt;</span> — Testo breve", "md_FXML__SPEC.html#autotoc_md21", null ],
-        [ "<span class=\"tt\">&lt;textarea&gt;</span> — Testo lungo", "md_FXML__SPEC.html#autotoc_md22", null ],
-        [ "<span class=\"tt\">&lt;numberfield&gt;</span> — Numero", "md_FXML__SPEC.html#autotoc_md23", null ],
-        [ "<span class=\"tt\">&lt;datefield&gt;</span> — Data", "md_FXML__SPEC.html#autotoc_md24", null ],
-        [ "<span class=\"tt\">&lt;selectfield&gt;</span> — Menu a tendina", "md_FXML__SPEC.html#autotoc_md25", null ],
-        [ "<span class=\"tt\">&lt;checkfield&gt;</span> — Casella di spunta", "md_FXML__SPEC.html#autotoc_md26", null ],
-        [ "<span class=\"tt\">&lt;radiogroup&gt;</span> — Scelta esclusiva", "md_FXML__SPEC.html#autotoc_md27", null ],
-        [ "<span class=\"tt\">&lt;computed&gt;</span> — Campo calcolato (sola lettura)", "md_FXML__SPEC.html#autotoc_md28", null ]
+      [ "autotoc_md17", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md17", null ],
+      [ "autotoc_md18", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md18", null ],
+      [ "autotoc_md20", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md20", [
+        [ "autotoc_md21", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md21", null ],
+        [ "autotoc_md22", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md22", null ],
+        [ "autotoc_md23", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md23", null ],
+        [ "autotoc_md24", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md24", null ],
+        [ "autotoc_md25", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md25", null ],
+        [ "autotoc_md26", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md26", null ],
+        [ "autotoc_md27", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md27", null ],
+        [ "autotoc_md28", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md28", null ]
       ] ],
-      [ "<span class=\"tt\">&lt;conditional&gt;</span> — Blocco condizionale", "md_FXML__SPEC.html#autotoc_md30", null ],
-      [ "<span class=\"tt\">&lt;pagebreak&gt;</span> — Interruzione di pagina", "md_FXML__SPEC.html#autotoc_md32", null ],
-      [ "Interpolazione di variabili nel testo", "md_FXML__SPEC.html#autotoc_md34", null ],
-      [ "Validazione dei campi", "md_FXML__SPEC.html#autotoc_md36", null ],
-      [ "Esempio completo", "md_FXML__SPEC.html#autotoc_md38", null ],
-      [ "Note implementative (backend)", "md_FXML__SPEC.html#autotoc_md40", null ],
-      [ "Versioning", "md_FXML__SPEC.html#autotoc_md42", null ]
+      [ "autotoc_md30", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md30", null ],
+      [ "autotoc_md32", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md32", null ],
+      [ "autotoc_md34", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md34", null ],
+      [ "autotoc_md36", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md36", null ],
+      [ "autotoc_md38", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md38", null ],
+      [ "autotoc_md40", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md40", null ],
+      [ "autotoc_md42", "md_docs_2html_2md__FXML____SPEC.html#autotoc_md42", null ]
     ] ],
+    [ "namespacemembers", "md_docs_2html_2namespacemembers.html", null ],
+    [ "namespacemembers_func", "md_docs_2html_2namespacemembers__func.html", null ],
+    [ "namespacepdfutils", "md_docs_2html_2namespacepdfutils.html", null ],
+    [ "namespaces", "md_docs_2html_2namespaces.html", null ],
+    [ "pages", "md_docs_2html_2pages.html", null ],
+    [ "Specifica del formato <span class=\"tt\">.fxml</span>", "md_FXML__SPEC.html", null ],
+    [ "admin", "md_templates_2admin.html", null ],
+    [ "form_creator", "md_templates_2form__creator.html", null ],
+    [ "form_result", "md_templates_2form__result.html", null ],
+    [ "form_view", "md_templates_2form__view.html", null ],
+    [ "index", "md_templates_2index.html", null ],
+    [ "settings", "md_templates_2settings.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [

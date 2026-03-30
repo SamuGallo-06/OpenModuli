@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Impostazioni - OpenModuli</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="{{ url_for('static', filename='admin.js') }}"></script>
+    </head>
+    <body>
+
+        <dialog id="dialog-delete">
+            <p>Sei sicuro di voler eliminare il modulo?</p>
+            <strong id="dialog-filename"></strong>
+            <div class="dialog-actions">
+                <button id="dialog-confirm" class="btn_danger">Elimina</button>
+                <button id="dialog-discard">Annulla</button>
+            </div>
+        </dialog>
+
+        <dialog id="dialog-new-form">
+            <span>Crea un nuovo modulo con nome:</span>
+            <form action="/create_form" method="POST">
+                <input type="text" id="name" name="name" placeholder="Nome modulo" required/>
+
+            <div class="dialog-actions">
+                <button type="submit" id="dialog-confirm" class="btn_success">Crea</button>
+                <button id="dialog-discard">Annulla</button>
+            </div>
+            
+        </dialog>
+
+        <!--** Top navigation bar. Used for accessing main sections of the application */ -->
+        <nav class="topbar">
+            <div class="menu-item">
+                <button>File ▾</button>
+                <div class="dropdown">
+                <a href="">Nuovo</a>
+                <a href="#">Apri</a>
+                <a href="#">Salva</a>
+                <hr>
+                <a href="#">Esci</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <button>Modifica ▾</button>
+                <div class="dropdown">
+                <a href="#">Annulla</a>
+                <a href="#">Copia</a>
+                <a href="#">Incolla</a>
+                </div>
+            </div>
+            </nav>
+
+        <main class="container">
+            <header>
+                <h1>Impostazioni - OpenModuli</h1>
+            </header>
+
+            <div>
+                <form>
+                    <!--** Here goes the settings for defining path
+                    - Form files are stored in a specific directory, and generated PDFs in another. 
+                    Here the admin can set those paths. */ -->
+                    <section>
+                        <span>Percorso dei moduli</span><input type="text" name="forms_path"/><br/>
+                        <span>Percorso dei PDF</span><input type="text" name="pdf_path"/><br/>
+                    </section>
+                </form>
+            </div>
+
+            <!--** Here goes the footer with copyright information */ -->
+            <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
+                <p>OpenModuli - Open Source Self-hosted forms</p>
+                <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
+            </footer>
+        </main>
+    </body>
+</html>

@@ -6,13 +6,88 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="{{ url_for('static', filename='admin.js') }}"></script>
     </head>
     <body>
+
+        <dialog id="dialog-delete">
+            <p>Sei sicuro di voler eliminare il modulo?</p>
+            <strong id="dialog-filename"></strong>
+            <div class="dialog-actions">
+                <button id="dialog-confirm" class="btn_danger">Elimina</button>
+                <button id="dialog-discard">Annulla</button>
+            </div>
+        </dialog>
+
+        <dialog id="dialog-new-form">
+            <span>Crea un nuovo modulo con nome:</span>
+            <form action="/create_form" method="POST">
+                <input type="text" id="name" name="name" placeholder="Nome modulo" required/>
+
+            <div class="dialog-actions">
+                <button type="submit" id="dialog-confirm" class="btn_success">Crea</button>
+                <button id="dialog-discard">Annulla</button>
+            </div>
+            
+        </dialog>
+
+        <!--/*!
+         * @file admin.html
+         * @brief Top navigation bar for main application sections.
+         * 
+         * @details
+         * Provides access to the following menu items:
+         * - **File**
+         *   - New Form
+         *   - Upload Form
+         *   - Settings
+         *   - Exit
+         * - **Server Controls**
+         *   - Reboot Application
+         *   - Shutdown Application
+         * - **Help**
+         *   - Documentation
+         *   - Contact Support
+         * - **About**
+         *   - Github Repository
+         *   - License
+         *   - About
+         */-->
+        <nav class="topbar">
+            <div class="menu-item">
+                <button>File ▾</button>
+                <div class="dropdown">
+                <a href="">Nuovo</a>
+                <a href="#">Apri</a>
+                <a href="#">Salva</a>
+                <hr>
+                <a href="#">Esci</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <button>Modifica ▾</button>
+                <div class="dropdown">
+                <a href="#">Annulla</a>
+                <a href="#">Copia</a>
+                <a href="#">Incolla</a>
+                </div>
+            </div>
+            </nav>
+
         <main class="container">
             <header>
                 <h1>Pannello di Controllo - OpenModuli</h1>
             </header>
+            
+            <!--!
+            @file admin.html
+            @brief Admin template for the File Manager list form.
 
+            @details
+            Provides the administrative UI structure used to render and manage a list of files/modules.
+            It is designed for dynamic server-side rendering and supports common management actions
+            such as listing, filtering, editing, and deleting entries.
+            -->
             <div>
                 <h2>Moduli disponibili</h2>
                 <div class="file-grid">
@@ -22,7 +97,7 @@
                             <span class="file-name">{{ form }}</span>
                             <div class="file-actions">
                                 <a class="ui_button" href="{{ url_for('form_view', form_name=form) }}">Visualizza</a>
-                                <button class="btn_danger" type="button">Elimina</button>
+                                <button class="btn_danger" type="button" onclick="openDeleteFileDialog('{{ form }}')">Elimina</button>
                             </div>
                         </div>
                     {% endfor %}
