@@ -46,6 +46,7 @@ def admin():
     This is the admin page
     
     - Form Manager: it lists all the available forms and allows to create new ones or upload existing ones.
+    - Settings: it allows to change some settings of the application (not implemented yet).
 
     Returns:
         _type_: _description_
