@@ -57,39 +57,39 @@
          */-->
         <nav class="topbar">
             <div class="menu-item">
-                <button> ▾</button>
+                <button>File ▾</button>
                 <div class="dropdown">
-                    <a href="">Nuovo Modulo</a>
-                    <a href="#">Carica Modulo</a>
+                    <button onclick="onNewFormClicked()" class="navbar-item-button">Nuovo Modulo</button>
+                    <button onclick="onUploadFormClicked()" class="navbar-item-button">Carica Modulo</button>
                     <hr>
-                    <a href="#">Impostazioni</a>
+                    <button onclick="onSettingsClicked()" class="navbar-item-button">Impostazioni</button>
                 </div>
             </div>
             <div class="menu-item">
                 <button>Server ▾</button>
                 <div class="dropdown">
-                    <a href="#">Ricarica Configurazione</a>
-                    <a href="#">Riavvia OpenModuli</a>
-                    <a href="#">Riavvia Server</a>
-                    <a href="#">Spegni Server</a>
+                    <button onclick="onReloadConfigurationClicked()" class="navbar-item-button">Ricarica Configurazione</button>
+                    <button onclick="onRebootApplicationClicked()" class="navbar-item-button">Riavvia OpenModuli</button>
+                    <button onclick="onRebootServerClicked()" class="navbar-item-button">Riavvia Server</button>
+                    <button onclick="onShutdownServerClicked()" class="navbar-item-button">Spegni Server</button>
                 </div>
             </div>
             <div class="menu-item">
                 <button>Aiuto ▾</button>
                 <div class="dropdown">
-                    <a href="#">Documentazione</a>
-                    <a href="#">Contatta il supporto</a>
+                    <button onclick="onDocumentationClicked()" class="navbar-item-button">Documentazione</button>
+                    <button onclick="onContactSupportClicked()" class="navbar-item-button">Contatta il supporto</button>
                 </div> 
             </div>
             <div class="menu-item">
                 <button>Info ▾</button>
                     <div class="dropdown">
-                    <a href="#">Repository Github</a>
-                    <a href="#">Licenza</a>
-                    <a href="#">Informazioni su OpenModuli</a>
+                    <button onclick="onGitHubRepoClicked()" class="navbar-item-button">Repository Github</button>
+                    <button onclick="onLicenceClicked()" class="navbar-item-button">Licenza</button>
+                    <button onclick="onAboutClicked()" class="navbar-item-button">Informazioni su OpenModuli</button>
                 </div>
             </div>
-            </nav>
+        </nav>
 
         <main class="container">
             <header>

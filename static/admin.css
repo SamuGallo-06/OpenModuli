@@ -120,16 +120,24 @@
   display: block;
 }
 
-.dropdown a {
+.dropdown a,
+.dropdown .navbar-item-button {
   display: block;
   padding: 7px 12px;
   font-size: 13px;
   color: #222;
   text-decoration: none;
   border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
-.dropdown a:hover {
+.dropdown a:hover,
+.dropdown .navbar-item-button:hover {
   background: #f0f0f0;
 }
 
@@ -149,13 +157,9 @@
   color: #111; /* ← aggiungi questa riga */
 }
 
-.dropdown a {
-  display: block;
-  padding: 7px 12px;
-  font-size: 13px;
-  color: #111; /* ← già presente, verifica che non venga sovrascritto da style.css */
-  text-decoration: none;
-  border-radius: 4px;
+.dropdown a,
+.dropdown .navbar-item-button {
+  color: #111;
 }
 
 .topbar .menu-item > button {
