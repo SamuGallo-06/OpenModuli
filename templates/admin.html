@@ -43,8 +43,10 @@
          *   - Settings
          *   - Exit
          * - **Server Controls**
+             - Reload Configuration
          *   - Reboot Application
-         *   - Shutdown Application
+         *   - Reboot Server
+             - Shutdown Server
          * - **Help**
          *   - Documentation
          *   - Contact Support
@@ -55,21 +57,37 @@
          */-->
         <nav class="topbar">
             <div class="menu-item">
-                <button>File ▾</button>
+                <button> ▾</button>
                 <div class="dropdown">
-                <a href="">Nuovo</a>
-                <a href="#">Apri</a>
-                <a href="#">Salva</a>
-                <hr>
-                <a href="#">Esci</a>
+                    <a href="">Nuovo</a>
+                    <a href="#">Apri</a>
+                    <a href="#">Salva</a>
+                    <hr>
+                    <a href="#">Esci</a>
                 </div>
             </div>
             <div class="menu-item">
-                <button>Modifica ▾</button>
+                <button>Server ▾</button>
                 <div class="dropdown">
-                <a href="#">Annulla</a>
-                <a href="#">Copia</a>
-                <a href="#">Incolla</a>
+                    <a href="#">Ricarica Configurazione</a>
+                    <a href="#">Riavvia OpenModuli</a>
+                    <a href="#">Riavvia Server</a>
+                    <a href="#">Spegni Server</a>
+                </div>
+            </div>
+            <div class="menu-item">
+                <button>Aiuto ▾</button>
+                <div class="dropdown">
+                    <a href="#">Documentazione</a>
+                    <a href="#">Contattaci</a>
+                </div> 
+            </div>
+            <div class="menu-item">
+                <button>Info ▾</button>
+                    <div class="dropdown">
+                    <a href="#">Repository Github</a>
+                    <a href="#">Licenza</a>
+                    <a href="#">Informazioni su OpenModuli</a>
                 </div>
             </div>
             </nav>
