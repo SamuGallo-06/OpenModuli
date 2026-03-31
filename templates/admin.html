@@ -6,104 +6,71 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script src="{{ url_for('static', filename='admin.js') }}"></script>
-        <script src="{{ url_for('static', filename='navbar.js' )}}"></script>
+        <script src="{{ url_for('static', filename='admin.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='navbar.js' )}}" defer></script>
     </head>
     <body>
+        <!--! @file admin.html
+            @brief Admin control panel template for OpenModuli.
+            
+            @details
+            Main administrative interface providing module management functionality.
+            Includes dialogs for form creation, deletion, and upload operations.
+            Supports dynamic server-side rendering with Jinja2 templating.
+        -->
 
+        <!--! @brief Delete confirmation dialog.
+            @details Modal dialog for confirming module deletion.
+            Displays the module filename and provides confirm/cancel actions.
+        -->
         <dialog id="dialog-delete">
             <p>Sei sicuro di voler eliminare il modulo?</p>
             <strong id="dialog-filename"></strong>
             <div class="dialog-actions">
                 <button id="dialog-confirm" class="btn_danger">Elimina</button>
-                <button id="dialog-discard">Annulla</button>
+                <button id="dialog-delete-discard">Annulla</button>
             </div>
         </dialog>
 
+        <!--! @brief New form creation dialog.
+            @details Modal dialog for creating a new module.
+            Accepts module name input and submits via POST to /create_form endpoint.
+        -->
         <dialog id="dialog-new-form">
-            <span>Crea un nuovo modulo con nome:</span>
+            <span>Crea un nuovo modulo con nome:</span><br>
             <form action="/create_form" method="POST">
-                <input type="text" id="name" name="name" placeholder="Nome modulo" required/>
-
-            <div class="dialog-actions">
-                <button type="submit" id="dialog-confirm" class="btn_success">Crea</button>
-                <button id="dialog-discard">Annulla</button>
-            </div>
-            
+                <input type="text" id="new-form-name" name="new-form-name" placeholder="Nome modulo" required/>
+                <div class="dialog-actions">
+                    <button type="submit" id="new-form-dialog-confirm" class="btn_success">Crea</button>
+                    <button id="dialog-new-form-discard">Annulla</button>
+                </div>
+            </form>
         </dialog>
 
-        <!--/*!
-         * @file admin.html
-         * @brief Top navigation bar for main application sections.
-         * 
-         * @details
-         * Provides access to the following menu items:
-         * - **File**
-         *   - New Form
-         *   - Upload Form
-         *   - Settings
-         * - **Server Controls**
-             - Reload Configuration
-         *   - Reboot Application
-         *   - Reboot Server
-             - Shutdown Server
-         * - **Help**
-         *   - Documentation
-         *   - Contact Support
-         * - **About**
-         *   - Github Repository
-         *   - License
-         *   - About
-         */-->
-        <nav class="topbar">
-            <div class="menu-item">
-                <button>File ▾</button>
-                <div class="dropdown">
-                    <button onclick="onNewFormClicked()" class="navbar-item-button">Nuovo Modulo</button>
-                    <button onclick="onUploadFormClicked()" class="navbar-item-button">Carica Modulo</button>
-                    <hr>
-                    <button onclick="onSettingsClicked()" class="navbar-item-button">Impostazioni</button>
+        <!--! @brief Form upload dialog.
+            @details Modal dialog for uploading a new FXML module file.
+            Accepts .fxml files and submits via POST to /upload_form endpoint.
+        -->
+        <dialog id="dialog-upload-form">
+            <span>Carica un nuovo modulo:</span><br>
+            <form action="/upload_form" method="POST" enctype="multipart/form-data">
+                <input type="file" id="upload-form-file" name="fxml_file" accept=".fxml" required/>
+                <div class="dialog-actions">
+                    <button type="submit" id="upload-form-dialog-confirm" class="btn_success">Carica</button>
+                    <button id="dialog-upload-form-discard">Annulla</button>
                 </div>
-            </div>
-            <div class="menu-item">
-                <button>Server ▾</button>
-                <div class="dropdown">
-                    <button onclick="onReloadConfigurationClicked()" class="navbar-item-button">Ricarica Configurazione</button>
-                    <button onclick="onRebootApplicationClicked()" class="navbar-item-button">Riavvia OpenModuli</button>
-                    <button onclick="onRebootServerClicked()" class="navbar-item-button">Riavvia Server</button>
-                    <button onclick="onShutdownServerClicked()" class="navbar-item-button">Spegni Server</button>
-                </div>
-            </div>
-            <div class="menu-item">
-                <button>Aiuto ▾</button>
-                <div class="dropdown">
-                    <button onclick="onDocumentationClicked()" class="navbar-item-button">Documentazione</button>
-                    <button onclick="onContactSupportClicked()" class="navbar-item-button">Contatta il supporto</button>
-                </div> 
-            </div>
-            <div class="menu-item">
-                <button>Info ▾</button>
-                    <div class="dropdown">
-                    <button onclick="onGitHubRepoClicked()" class="navbar-item-button">Repository Github</button>
-                    <button onclick="onLicenceClicked()" class="navbar-item-button">Licenza</button>
-                    <button onclick="onAboutClicked()" class="navbar-item-button">Informazioni su OpenModuli</button>
-                </div>
-            </div>
-        </nav>
+            </form>
+        </dialog>
 
         <main class="container">
             <header>
                 <h1>Pannello di Controllo - OpenModuli</h1>
             </header>
             
-            <!--!
-            @file admin.html
-            @brief Admin template for the File Manager list form.
-
-            @details
-            Provides the administrative UI structure used to render and manage a list of files/modules.
-            It is designed for dynamic server-side rendering and supports common management actions
-            such as listing, filtering, editing, and deleting entries.
+            <!--! @section available_forms
+                @brief Available modules section.
+                @details Displays a grid of uploaded FXML modules with viewing and deletion options.
+                Each module card includes file icon, name, and action buttons.
             -->
             <div>
                 <h2>Moduli disponibili</h2>
@@ -121,28 +88,34 @@
                 </div>
             </div>
 
+            <!--! @section admin_actions
+                @brief Administrative actions menu.
+                
+                @details
+                Top navigation menu providing access to:
+                - **File section**: Create new form, upload form, settings
+                - **Help section**: Documentation, support contact
+                - **About section**: Repository link, license, application info
+            -->
             <div>
-                <h2>Carica Modulo</h2>
-                <form method="POST" action="{{ url_for('upload_form') }}" enctype="multipart/form-data">
-                    <input type="file" name="fxml_file" required />
-                    <input type="text" name="name" placeholder="Nome modulo" required/>
-                    <button type="submit">Carica</button>
-                </form>
+                <h2>Azioni</h2>
+                <h3>File</h3>
+                <button onclick="onNewFormClicked()">Nuovo Modulo</button>
+                <button onclick="onUploadFormClicked()">Carica Modulo</button>
+                <button onclick="onSettingsClicked()">Impostazioni</button>
+                <h3>Aiuto</h3>
+                <button onclick="onDocumentationClicked()">Documentazione</button>
+                <button onclick="onContactSupportClicked()">Contatta il supporto</button>
+                <h3>Informazioni</h3>
+                <button onclick="onGitHubRepoClicked()">Repository Github</button>
+                <button onclick="onLicenceClicked()">Licenza</button>
+                <button onclick="onAboutClicked()">Informazioni su OpenModuli</button>
             </div>
 
-            <div>
-                <h2>Editor Moduli</h2>
-                <a class="ui_button" href="{{ url_for('create_form') }}">Apri Editor FXML</a>
-            </div>
-
-            <div>
-                <h2>Impostazioni</h2>
-                <form>
-                    <span>Percorso dei moduli</span><input type="text" name="forms_path"/>
-                    <span>Percorso dei PDF</span><input type="text" name="pdf_path"/>
-                </form>
-            </div>
-
+            <!--! @section footer
+                @brief Application footer.
+                @details Contains copyright information and author attribution.
+            -->
             <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
                 <p>OpenModuli - Open Source Self-hosted forms</p>
                 <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>

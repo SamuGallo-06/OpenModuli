@@ -15,6 +15,7 @@ from routes.server_controls import server_bp
 app = Flask(__name__)
 app.register_blueprint(server_bp)
 
+
 PROGRAM_NAME = "OpenModuli"
 FORM_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
@@ -22,6 +23,17 @@ set_program_name(PROGRAM_NAME)
 
 
 def _normalize_form_name(form_name: str) -> str:
+    """Normalize and validate a form name.
+    
+    Removes leading/trailing whitespace from the provided form name and validates
+    it against the FORM_NAME_RE regex pattern. The normalized name must be non-empty
+    and match the expected format.
+    
+    @param form_name (str): The form name to normalize. Can be None or empty string.
+    @return (str): The normalized form name stripped of whitespace.
+    @raises ValueError: If the form name is empty after stripping or does not match
+                        the FORM_NAME_RE regex pattern. Error message: "Nome modulo non valido"
+    """
     normalized = (form_name or "").strip()
     if not normalized or not FORM_NAME_RE.fullmatch(normalized):
         raise ValueError("Nome modulo non valido")
@@ -29,6 +41,15 @@ def _normalize_form_name(form_name: str) -> str:
 
 
 def _form_path(form_name: str) -> str:
+    """@brief Constructs the file path for a form FXML file based on the form name.
+
+    @param form_name (str): The name of the form to locate.
+
+    @return (str): The full file path to the form's FXML file located in the application's forms directory.
+
+    @details This function normalizes the provided form name and constructs a path
+             to the corresponding FXML file in the application's forms directory.
+    """
     safe_name = _normalize_form_name(form_name)
     forms_dir = os.path.join(app.root_path, "forms")
     return os.path.join(forms_dir, f"{safe_name}.fxml")
@@ -65,9 +86,28 @@ def admin():
         "admin.html",
         forms=forms
     )
+    
+@app.route("/admin/settings")
+def settings():
+    """_summary_
+    ## Settings page
+    This is the settings page, where the admin can change some settings of the application (not implemented yet).
+
+    Returns:
+        _type_: _description_
+    """
+    return render_template("settings.html")
 
 @app.route("/form/<form_name>", methods=["GET", "POST"])
 def form_view(form_name: str):
+    """Loads a form from a file and shows it on the web page.
+
+    Args:
+        form_name (str): The name of the form to display. It should correspond to an FXML file in the forms directory, without the extension.
+
+    Returns:
+        render_template: HTML page rendering the form view.
+    """
     try:
         fxml_path = _form_path(form_name)
     except ValueError:
@@ -161,7 +201,7 @@ def create_form():
     name = ""
 
     if request.method == "POST":
-        name = request.form.get("name", "")
+        name = request.form.get("new-form-name", "")
     else:
         name = request.args.get("name", "")
 
@@ -248,6 +288,10 @@ def api_validate_fxml_form():
     valid, details = _validate_fxml_content(content)
     status = 200 if valid else 400
     return jsonify({"valid": valid, "error": details}), status
+
+@app.route("/about/license")
+def license_view():
+    return send_from_directory(app.root_path, "LICENSE", mimetype="text/plain")
 
 
 def _validate_fxml_content(content: str):

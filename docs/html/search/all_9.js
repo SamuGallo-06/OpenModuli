@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['settings_0',['settings',['../md_templates_2settings.html',1,'']]],
-  ['specifica_20del_20formato_20fxml_1',['Specifica del formato &lt;span class=&quot;tt&quot;&gt;.fxml&lt;/span&gt;',['../md_FXML__SPEC.html',1,'']]]
+  ['page_0',['page',['../main_8py.html#autotoc_md44',1,'Admin page'],['../main_8py.html#autotoc_md45',1,'Settings page']]],
+  ['pages_1',['pages',['../md_docs_2html_2pages.html',1,'']]],
+  ['pdfutils_2',['pdfutils',['../namespacepdfutils.html',1,'']]]
 ];

@@ -41,11 +41,24 @@
                     <!--** Here goes the settings for defining path
                     - Form files are stored in a specific directory, and generated PDFs in another. 
                     Here the admin can set those paths. */ -->
-                    <section>
-                        <span>Percorso dei moduli</span><input type="text" name="forms_path"/><br/>
-                        <span>Percorso dei PDF</span><input type="text" name="pdf_path"/><br/>
+                    <section title="Percorsi">
+                        <span>Percorso dei moduli: </span><input type="text" name="forms_path"/><br/>
+                        <span>Percorso dei PDF: </span><input type="text" name="pdf_path"/><br/>
                     </section>
+                    <section title="Personalizzazione">
+                        <span>Immagine di Sfondo: </span><input type="file" name="background_image"/><button>Ripristina</button><br/>
+                    </section>
+                    <button type="submit">Salva Cambiamenti</button>
+                    <button type="reset">Ripristina</button>
                 </form>
+            </div>
+
+            <div>
+                <h2>Controlli del server</h2>
+                <button onclick="onReloadConfigurationClicked()">Ricarica Configurazione</button>
+                <button onclick="onRebootApplicationClicked()">Riavvia OpenModuli</button>
+                <button onclick="onRebootServerClicked()">Riavvia Server</button>
+                <button onclick="onShutdownServerClicked()">Spegni Server</button>
             </div>
 
             <!--** Here goes the footer with copyright information */ -->

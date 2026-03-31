@@ -24,4 +24,6 @@ function openNewFileDialog(nome) {
   };
 }
 
-document.getElementById('dialog-discard').onclick = () => dialog.close();
+document.getElementById('dialog-delete-discard').onclick = () => dialog.close();
+document.getElementById('dialog-new-form-discard').onclick = () => 
+    document.getElementById('dialog-new-form').close();

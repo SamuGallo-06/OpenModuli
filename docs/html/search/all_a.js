@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['menu_20a_20tendina_0',['&lt;span class=&quot;tt&quot;&gt;&amp;lt;selectfield&amp;gt;&lt;/span&gt; — Menu a tendina',['../md_FXML__SPEC.html#autotoc_md25',1,'']]]
+  ['settings_0',['settings',['../md_templates_2settings.html',1,'']]],
+  ['settings_20page_1',['Settings page',['../main_8py.html#autotoc_md45',1,'']]],
+  ['specifica_20del_20formato_20fxml_2',['Specifica del formato &lt;span class=&quot;tt&quot;&gt;.fxml&lt;/span&gt;',['../md_FXML__SPEC.html',1,'']]]
 ];

@@ -113,28 +113,6 @@ $(function(){initNavTree('md_templates_2settings.html','',''); });
 
 &lt;/dialog&gt;
 
-&lt;!--** Top navigation bar. Used for accessing main sections of the application */ --&gt;
-&lt;nav class="topbar"&gt;
-    &lt;div class="menu-item"&gt;
-        &lt;button&gt;File ▾&lt;/button&gt;
-        &lt;div class="dropdown"&gt;
-        &lt;a href=""&gt;Nuovo&lt;/a&gt;
-        &lt;a href="#"&gt;Apri&lt;/a&gt;
-        &lt;a href="#"&gt;Salva&lt;/a&gt;
-        &lt;hr&gt;
-        &lt;a href="#"&gt;Esci&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="menu-item"&gt;
-        &lt;button&gt;Modifica ▾&lt;/button&gt;
-        &lt;div class="dropdown"&gt;
-        &lt;a href="#"&gt;Annulla&lt;/a&gt;
-        &lt;a href="#"&gt;Copia&lt;/a&gt;
-        &lt;a href="#"&gt;Incolla&lt;/a&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;/nav&gt;
-
 &lt;main class="container"&gt;
     &lt;header&gt;
         &lt;h1&gt;Impostazioni - OpenModuli&lt;/h1&gt;
@@ -145,11 +123,24 @@ $(function(){initNavTree('md_templates_2settings.html','',''); });
             &lt;!--** Here goes the settings for defining path
             - Form files are stored in a specific directory, and generated PDFs in another. 
             Here the admin can set those paths. */ --&gt;
-            &lt;section&gt;
-                &lt;span&gt;Percorso dei moduli&lt;/span&gt;&lt;input type="text" name="forms_path"/&gt;&lt;br/&gt;
-                &lt;span&gt;Percorso dei PDF&lt;/span&gt;&lt;input type="text" name="pdf_path"/&gt;&lt;br/&gt;
+            &lt;section title="Percorsi"&gt;
+                &lt;span&gt;Percorso dei moduli: &lt;/span&gt;&lt;input type="text" name="forms_path"/&gt;&lt;br/&gt;
+                &lt;span&gt;Percorso dei PDF: &lt;/span&gt;&lt;input type="text" name="pdf_path"/&gt;&lt;br/&gt;
             &lt;/section&gt;
+            &lt;section title="Personalizzazione"&gt;
+                &lt;span&gt;Immagine di Sfondo: &lt;/span&gt;&lt;input type="file" name="background_image"/&gt;&lt;button&gt;Ripristina&lt;/button&gt;&lt;br/&gt;
+            &lt;/section&gt;
+            &lt;button type="submit"&gt;Salva Cambiamenti&lt;/button&gt;
+            &lt;button type="reset"&gt;Ripristina&lt;/button&gt;
         &lt;/form&gt;
+    &lt;/div&gt;
+
+    &lt;div&gt;
+        &lt;h2&gt;Controlli del server&lt;/h2&gt;
+        &lt;button onclick="onReloadConfigurationClicked()"&gt;Ricarica Configurazione&lt;/button&gt;
+        &lt;button onclick="onRebootApplicationClicked()"&gt;Riavvia OpenModuli&lt;/button&gt;
+        &lt;button onclick="onRebootServerClicked()"&gt;Riavvia Server&lt;/button&gt;
+        &lt;button onclick="onShutdownServerClicked()"&gt;Spegni Server&lt;/button&gt;
     &lt;/div&gt;
 
     &lt;!--** Here goes the footer with copyright information */ --&gt;
