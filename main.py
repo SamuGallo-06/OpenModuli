@@ -19,6 +19,8 @@ app.register_blueprint(server_bp)
 PROGRAM_NAME = "OpenModuli"
 FORM_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
+PASSWORD = "admin"
+
 set_program_name(PROGRAM_NAME)
 
 
@@ -98,6 +100,30 @@ def settings():
     """
     return render_template("settings.html")
 
+@app.route("/admin/settings/save", methods=["POST"])
+def save_settings():
+    return redirect(url_for("settings"))
+
+@app.route("/admin/settings/change-psswd", methods=["POST"])
+def change_password():
+    global PASSWORD
+    old_password = str(request.form.get("current_password", ""))
+    new_password = str(request.form.get("new_password", ""))
+    new_password_confirm = str(request.form.get("confirm_password", ""))
+    
+    if((old_password == PASSWORD) and (new_password == new_password_confirm)):
+        PASSWORD = new_password
+        print("[SETTINGS] Password changed successfully")
+    elif old_password != PASSWORD:
+        print("[SETTINGS] Failed to change password: current password is incorrect")
+    elif new_password != new_password_confirm:
+        print("[SETTINGS] Failed to change password: new password and confirmation do not match")
+    else:
+        print("[SETTINGS] Failed to change password: unknown error")
+    
+    
+    return redirect(url_for("settings"))
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """_summary_
@@ -110,7 +136,7 @@ def login():
     if request.method == "POST":
         password = request.form.get("password", "")
         otp_code = request.form.get("otp-code", "")
-        if password != "admin":  # Replace with secure password check in production
+        if password != PASSWORD:
             return render_template("login.html", error="Invalid password")
         return redirect(url_for("admin"))
     

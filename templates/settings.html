@@ -9,35 +9,21 @@
         <script src="{{ url_for('static', filename='admin.js') }}"></script>
     </head>
     <body>
-
-        <dialog id="dialog-delete">
-            <p>Sei sicuro di voler eliminare il modulo?</p>
-            <strong id="dialog-filename"></strong>
-            <div class="dialog-actions">
-                <button id="dialog-confirm" class="btn_danger">Elimina</button>
-                <button id="dialog-discard">Annulla</button>
-            </div>
-        </dialog>
-
-        <dialog id="dialog-new-form">
-            <span>Crea un nuovo modulo con nome:</span>
-            <form action="/create_form" method="POST">
-                <input type="text" id="name" name="name" placeholder="Nome modulo" required/>
-
-            <div class="dialog-actions">
-                <button type="submit" id="dialog-confirm" class="btn_success">Crea</button>
-                <button id="dialog-discard">Annulla</button>
-            </div>
+        <!--! @file settings.html
+            @brief Settings page template for OpenModuli.
             
-        </dialog>
-
+            @details
+            Provides interface for configuring application settings such as file paths and server controls.
+            Includes sections for path configuration, personalization options, and server management actions.
+            Supports dynamic server-side rendering with Jinja2 templating.
+        -->
         <main class="container">
             <header>
                 <h1>Impostazioni - OpenModuli</h1>
             </header>
 
             <div>
-                <form>
+                <form action="/admin/settings/save" method="POST" enctype="multipart/form-data">
                     <!--** Here goes the settings for defining path
                     - Form files are stored in a specific directory, and generated PDFs in another. 
                     Here the admin can set those paths. */ -->
@@ -45,11 +31,36 @@
                         <span>Percorso dei moduli: </span><input type="text" name="forms_path"/><br/>
                         <span>Percorso dei PDF: </span><input type="text" name="pdf_path"/><br/>
                     </section>
+                    <section title="Informazioni Ente">
+                        <span>Logo: </span><input type="file" name="logo_image"/><button>Ripristina</button><br/>
+                        <span>Nome Ente: </span><input type="text" name="entity_name"/><button>Ripristina</button><br/>
+                        <span>Indirizzo:</span><input type="text" name="entity_address"/><button>Ripristina</button><br/>
+                        <span>Email: </span><input type="text" name="entity_contacts"/><button>Ripristina</button><br/>
+                        <span>Telefono: </span><input type="text" name="entity_phone"/><button>Ripristina</button><br/>
+                    </section>
                     <section title="Personalizzazione">
+                        <span>Colore primario: </span><input type="color" name="primary_color"/><button>Ripristina</button><br/>
+                        <span>Colore secondario: </span><input type="color" name="secondary_color"/><button>Ripristina</button><br/>
                         <span>Immagine di Sfondo: </span><input type="file" name="background_image"/><button>Ripristina</button><br/>
                     </section>
-                    <button type="submit">Salva Cambiamenti</button>
-                    <button type="reset">Ripristina</button>
+                    <p>
+                        <button type="submit">Salva Cambiamenti</button>
+                        <button type="reset">Ripristina</button>
+                    </p>
+                </form>
+            </div>
+
+            <div>
+                <form action="/admin/settings/change-psswd" method="POST" enctype="multipart/form-data">
+                    <section title="Password">
+                        <span>Password attuale: </span><input type="password" name="current_password"/><br/>
+                        <span>Nuova Password: </span><input type="password" name="new_password"/><br/>
+                        <span>Conferma Password: </span><input type="password" name="confirm_password"/><br/>
+                    </section>
+                    <p>
+                        <button type="submit">Salva Cambiamenti</button>
+                        <button type="reset">Ripristina</button>
+                    </p>
                 </form>
             </div>
 
@@ -61,11 +72,7 @@
                 <button onclick="onShutdownServerClicked()">Spegni Server</button>
             </div>
 
-            <!--** Here goes the footer with copyright information */ -->
-            <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
-                <p>OpenModuli - Open Source Self-hosted forms</p>
-                <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
-            </footer>
+            {% include 'partials/footer.html' %}
         </main>
     </body>
 </html>
