@@ -77,7 +77,7 @@
                 <div class="file-grid">
                     {% for form in forms %}
                         <div class="file-card">
-                            <div class="file-icon" aria-hidden="true">FXML</div>
+                            <img src="{{ url_for('static', filename='icons/fxml-icon.png') }}" class="file-icon" aria-hidden="true" />
                             <span class="file-name">{{ form }}</span>
                             <div class="file-actions">
                                 <a class="ui_button" href="{{ url_for('form_view', form_name=form) }}">Visualizza</a>

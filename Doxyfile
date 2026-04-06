@@ -1138,6 +1138,7 @@ EXCLUDE                =.venv/ \
                         forms/
                         pdfs/
                         .gitignore
+                        settings/
 
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
