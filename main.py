@@ -11,6 +11,7 @@ from utils import _json_safe, _find_available_port
 from pdfutils import create_pdf_from_form_data, set_program_name
 
 from routes.server_controls import server_bp
+from settings import *
 
 app = Flask(__name__)
 app.register_blueprint(server_bp)
@@ -112,7 +113,6 @@ def change_password():
     new_password_confirm = str(request.form.get("confirm_password", ""))
     
     if((old_password == PASSWORD) and (new_password == new_password_confirm)):
-        PASSWORD = new_password
         print("[SETTINGS] Password changed successfully")
     elif old_password != PASSWORD:
         print("[SETTINGS] Failed to change password: current password is incorrect")
