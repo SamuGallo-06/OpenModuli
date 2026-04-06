@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login - OpenModuli</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+        <!--! @file login.html
+            @brief Login template for OpenModuli.
+            
+            @details
+            Main login interface for accessing the administrative panel.
+            Includes form for username and password submission.
+            Supports dynamic server-side rendering with Jinja2 templating.
+        -->
+
+        <!--! @brief Password error dialog.
+            @details Modal dialog for displaying password error message.
+            Provides a cancel action.
+        -->
+        <dialog id="dialog-password-error">
+            <p><strong>ERRORE<strong>: Password non valida</p>
+            <strong id="dialog-filename"></strong>
+            <div class="dialog-actions">
+                <button id="dialog-password-error-discard">Annulla</button>
+            </div>
+        </dialog>
+        
+        <main class="container">
+            <header>
+                <h1>Pannello di Controllo - OpenModuli</h1>
+            </header>
+            <!--! @section footer
+                @brief Application footer.
+                @details Contains copyright information and author attribution.
+            -->
+
+            <div class="login-box">
+                <img class="login-icon" src="{{ url_for('static', filename='icons/person.png') }}"/>
+                <form action="/login" method="POST" class="login-form">
+                    <label for="password">Password:</label><br/>
+                    <input type="password" id="password" name="password" placeholder="Inserisci la password" required /><br/><br/>
+                    <!--
+                    <label for="otp-code">Codice OTP:</label><br/>
+                    <input type="text" id="otp-code" name="otp-code" placeholder="Inserisci il codice OTP" required /><br/><br/>
+                    -->
+                    <p>
+                        <button type="submit" class="btn_success">Accedi</button>
+                        <button type="button" id="forgot-password-btn" class="btn_link">Password dimenticata?</button>
+                    </p>
+                </form>
+            </div>
+
+            {% include 'partials/footer.html' %}
+        </main>
+    </body>
+</html>

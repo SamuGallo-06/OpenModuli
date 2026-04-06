@@ -98,6 +98,24 @@ def settings():
     """
     return render_template("settings.html")
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """_summary_
+    ## Login page
+    This is the login page, where the admin can log in to access the admin panel.
+
+    Returns:
+        _type_: _description_
+    """
+    if request.method == "POST":
+        password = request.form.get("password", "")
+        otp_code = request.form.get("otp-code", "")
+        if password != "admin":  # Replace with secure password check in production
+            return render_template("login.html", error="Invalid password")
+        return redirect(url_for("admin"))
+    
+    return render_template("login.html")
+
 @app.route("/form/<form_name>", methods=["GET", "POST"])
 def form_view(form_name: str):
     """Loads a form from a file and shows it on the web page.
