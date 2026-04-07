@@ -36,6 +36,7 @@ def first_start_setup(app):
         console.print("Verranno richieste le seguenti informazioni:")
         console.print("  [cyan]•[/cyan] Nome dell'organizzazione")
         console.print("  [cyan]•[/cyan] Credenziali dell'account amministratore")
+        console.print("  [cyan]•[/cyan] Percorsi di salvataggio per moduli e PDF")
         console.print()
         console.print("[dim]Puoi interrompere la procedura in qualsiasi momento con Ctrl+C.[/dim]")
         console.print("[bold]_________________________________________________________________[/bold]")

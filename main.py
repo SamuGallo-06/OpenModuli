@@ -109,6 +109,36 @@ def create_admin(username, password):
         click.echo(f'Admin "{username}" creato.')
         console.print(f"[green][SUCCESSO][/green] Utente admin '{username}' creato con successo.")
 
+
+@app.cli.command('remove-admin')
+@click.argument('username')
+@click.option('--force', is_flag=True, help='Rimuove l\'utente senza chiedere conferma.')
+def remove_admin(username, force):
+    """Rimuove un utente admin dal database."""
+    console.print(f"[blue][INFO][/blue] Rimozione utente admin '{username}'...")
+    sleep(0.5)
+
+    if not force and not click.confirm(f"Confermi la rimozione dell'utente admin '{username}'?", default=False):
+        console.print("[green][INFO][/green] Operazione annullata.")
+        return
+
+    with app.app_context():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            click.echo(f'Errore: utente "{username}" non trovato.')
+            console.print(f"[red][ERRORE][/red] Utente '{username}' non trovato.")
+            return
+
+        if user.role != 'admin':
+            click.echo(f'Errore: utente "{username}" non è un amministratore.')
+            console.print(f"[red][ERRORE][/red] L'utente '{username}' non è un amministratore.")
+            return
+
+        db.session.delete(user)
+        db.session.commit()
+        click.echo(f'Admin "{username}" rimosso.')
+        console.print(f"[green][SUCCESSO][/green] Utente admin '{username}' rimosso con successo.")
+
 def open_moduli_init():
     console.print("[blue][INFO][/blue] Caricamento della configurazione in corso...")
     sleep(0.5)
