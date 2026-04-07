@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login - {{ config.get('ENTITY_NAME', 'OpenModuli') }}</title>
+        <title>Login - OpenModuli</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
@@ -36,7 +36,7 @@
                 {% if logo and logo.startswith('static/') %}
                     <img src="{{ url_for('static', filename=logo[7:]) }}" alt="Logo" class="asset-image" style="max-width:120px;margin:0 auto 12px auto;" />
                 {% endif %}
-                <h1>Pannello di Controllo - {{ config.get('ENTITY_NAME', 'OpenModuli') }}</h1>
+                <h1>Pannello di Controllo - OpenModuli</h1>
             </header>
             <!--! @section footer
                 @brief Application footer.

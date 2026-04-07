@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ config.get('ENTITY_NAME', 'OpenModuli') }} - Self-hosted forms</title>
+        <title>OpenModuli - Self-hosted forms</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
@@ -14,7 +14,7 @@
                 {% if logo and logo.startswith('static/') %}
                     <img src="{{ url_for('static', filename=logo[7:]) }}" alt="Logo" class="asset-image" style="max-width:120px;margin:0 auto 12px auto;" />
                 {% endif %}
-                <h1>{{ config.get('ENTITY_NAME', 'OpenModuli') }}</h1>
+                <h1>OpenModuli</h1>
             </header>
             <a href="{{ url_for('login') }}">Accedi al Pannello di Controllo</a>
             

@@ -4,3 +4,4 @@ forms/
 venv/
 __pycache__/
 settings/
+instance/openmoduli.db

@@ -3,9 +3,11 @@
     @details Contains copyright information and author attribution.
 -->
 <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
-    <p>{{ config.get('ENTITY_NAME', 'OpenModuli') }} - Open Source Self-hosted forms</p>
+    <p>OpenModuli - Open Source Self-hosted forms</p>
     {% if config.get('ENTITY_ADDRESS') or config.get('ENTITY_CONTACTS') or config.get('ENTITY_PHONE') %}
         <p>
+            <span>In uso da </span>
+            {% if config.get('ENTITY_NAME') %}{{ config.get('ENTITY_NAME') }}{% else %}OpenModuli{% endif %}
             {% if config.get('ENTITY_ADDRESS') %}{{ config.get('ENTITY_ADDRESS') }}{% endif %}
             {% if config.get('ENTITY_CONTACTS') %}{% if config.get('ENTITY_ADDRESS') %} | {% endif %}{{ config.get('ENTITY_CONTACTS') }}{% endif %}
             {% if config.get('ENTITY_PHONE') %}{% if config.get('ENTITY_ADDRESS') or config.get('ENTITY_CONTACTS') %} | {% endif %}{{ config.get('ENTITY_PHONE') }}{% endif %}

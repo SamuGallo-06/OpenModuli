@@ -67,8 +67,8 @@ def first_start_setup(app):
         break
 
     while True:
-        admin_password = Prompt.ask("[cyan]- Password[/cyan]: ", password=True).strip()
-        confirm_password = Prompt.ask("[cyan]- Conferma password[/cyan]: ", password=True).strip()
+        admin_password = Prompt.ask("[cyan]- Password[/cyan]", password=True).strip()
+        confirm_password = Prompt.ask("[cyan]- Conferma password[/cyan]", password=True).strip()
 
         if not admin_password:
             console.clear()
