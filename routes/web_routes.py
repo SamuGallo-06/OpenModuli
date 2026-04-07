@@ -1,4 +1,5 @@
 import os
+import xml.etree.ElementTree as ET
 
 from flask import abort, redirect, render_template, request, send_from_directory, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -14,6 +15,7 @@ from xmlutils import parse_fxml
 
 from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir
 
+import subprocess
 
 def _template_message_context() -> dict:
     return {
@@ -36,6 +38,26 @@ def _save_uploaded_asset(app, file_storage, relative_folder: str) -> str:
     destination = os.path.join(target_dir, filename)
     file_storage.save(destination)
     return os.path.relpath(destination, app.root_path)
+
+
+def _extract_module_script_path(fxml_path: str) -> str:
+    """Return the full script path under forms/scripts for a form, if present."""
+    try:
+        root = ET.parse(fxml_path).getroot()
+    except ET.ParseError:
+        return ""
+
+    script_node = root.find(".//script")
+    if script_node is None:
+        return ""
+
+    script_file = (script_node.get("file") or "").strip()
+    if not script_file:
+        return ""
+
+    forms_dir = os.path.dirname(fxml_path)
+    script_name = os.path.basename(script_file)
+    return os.path.join(forms_dir, "scripts", script_name)
 
 
 def register_web_routes(app):
@@ -209,6 +231,19 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         form_attributes, nodes, variables, form_data, conditionals, variable_defs = parse_fxml(fxml_path, submitted_values)
 
         if request.method == "POST":
+            ## Executing associated script if defined in the form
+            script_path = _extract_module_script_path(fxml_path)
+            if script_path:
+                app.logger.info("[FORM] Script collegato al modulo '%s': %s", form_name, script_path)
+                try:
+                    result = subprocess.run(["python", script_path], capture_output=True, text=True, check=True)
+                    app.logger.info("[FORM] Output script '%s': %s", script_path, result.stdout)
+                except subprocess.CalledProcessError as exc:
+                    app.logger.error("[FORM] Errore esecuzione script '%s': %s", script_path, exc.stderr)
+            else:
+                app.logger.info("[FORM] Nessun script collegato al modulo '%s'", form_name)
+            
+            ## Generating PDF result from submitted form data
             pdf_result = create_pdf_from_form_data(
                 form_name,
                 form_attributes,

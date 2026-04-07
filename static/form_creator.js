@@ -57,6 +57,7 @@
     let dirty = false;
     let editorMode = "code";
     let visualModel = buildDefaultVisualModel();
+    let pendingScriptUpload = null;
 
     function buildDefaultVisualModel() {
         return {
@@ -390,6 +391,14 @@
                 return;
             }
 
+            if (tag === "script") {
+                items.push({
+                    kind: "script",
+                    file: child.getAttribute("file") || "",
+                });
+                return;
+            }
+
             items.push({
                 kind: "raw",
                 xml: serializeNode(child),
@@ -554,6 +563,10 @@
                     );
                     return;
                 }
+                if (item.kind === "script") {
+                    lines.push(`${itemIndent}<script file="${escapeXmlAttr(item.file || "")}" />`);
+                    return;
+                }
                 if (item.kind === "raw") {
                     item.xml
                         .split("\n")
@@ -609,6 +622,45 @@
             return null;
         }
         return row.items[itemIndex];
+    }
+
+    function countScriptItems() {
+        let count = 0;
+        visualModel.rootBlocks.forEach((rootBlock) => {
+            if (!rootBlock || rootBlock.kind !== "section") {
+                return;
+            }
+            rootBlock.blocks.forEach((block) => {
+                if (!block || block.kind !== "row") {
+                    return;
+                }
+                block.items.forEach((item) => {
+                    if (item && item.kind === "script") {
+                        count += 1;
+                    }
+                });
+            });
+        });
+        return count;
+    }
+
+    function getFirstScriptItem() {
+        for (const rootBlock of visualModel.rootBlocks) {
+            if (!rootBlock || rootBlock.kind !== "section") {
+                continue;
+            }
+            for (const block of rootBlock.blocks) {
+                if (!block || block.kind !== "row") {
+                    continue;
+                }
+                for (const item of block.items) {
+                    if (item && item.kind === "script") {
+                        return item;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     function renderVisualModel() {
@@ -675,6 +727,7 @@
                             <button type="button" data-action="add-item-field" data-root="${rootIndex}" data-block="${blockIndex}">+ Campo</button>
                             <button type="button" data-action="add-item-printvar" data-root="${rootIndex}" data-block="${blockIndex}">+ Printvar</button>
                             <button type="button" data-action="add-item-computed" data-root="${rootIndex}" data-block="${blockIndex}">+ Computed</button>
+                            <button type="button" data-action="add-item-script" data-root="${rootIndex}" data-block="${blockIndex}">+ Script</button>
                             <button type="button" data-action="delete-section-block" data-root="${rootIndex}" data-block="${blockIndex}" class="visual-danger">Rimuovi row</button>
                         </div>
                     `;
@@ -790,6 +843,24 @@
                                 </div>
                                 <div class="visual-item-tools">
                                     <button type="button" data-action="remove-item" data-root="${rootIndex}" data-block="${blockIndex}" data-item="${itemIndex}" class="visual-danger">Rimuovi computed</button>
+                                </div>
+                            `;
+                            itemsWrap.appendChild(itemCard);
+                            return;
+                        }
+
+                        if (item.kind === "script") {
+                            itemCard.innerHTML = `
+                                <div class="visual-item-grid">
+                                    <label style="grid-column:1/-1;">File script
+                                        <input type="file" accept=".py" data-role="script-file" data-root="${rootIndex}" data-block="${blockIndex}" data-item="${itemIndex}" />
+                                    </label>
+                                    <label style="grid-column:1/-1;">Nome file
+                                        <input data-role="script-prop" data-prop="file" data-root="${rootIndex}" data-block="${blockIndex}" data-item="${itemIndex}" value="${escapeHtml(item.file || "")}" placeholder="es. valida_documento.py" />
+                                    </label>
+                                </div>
+                                <div class="visual-item-tools">
+                                    <button type="button" data-action="remove-item" data-root="${rootIndex}" data-block="${blockIndex}" data-item="${itemIndex}" class="visual-danger">Rimuovi script</button>
                                 </div>
                             `;
                             itemsWrap.appendChild(itemCard);
@@ -960,6 +1031,7 @@
         try {
             const payload = await fetchJson("/api/fxml/forms/" + encodeURIComponent(name));
             currentForm = name;
+            pendingScriptUpload = null;
             nameInput.value = name;
             editor.value = payload.content || "";
             autoResizeEditor();
@@ -1033,13 +1105,42 @@
         }
 
         try {
-            const payload = await fetchJson("/api/fxml/forms/" + encodeURIComponent(requestedName), {
+            let payload = await fetchJson("/api/fxml/forms/" + encodeURIComponent(requestedName), {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ content: editor.value }),
             });
+
+            if (pendingScriptUpload && pendingScriptUpload.file) {
+                const formData = new FormData();
+                formData.append("script_file", pendingScriptUpload.file);
+
+                const scriptPayload = await fetchJson(
+                    "/api/fxml/forms/" + encodeURIComponent(requestedName) + "/script",
+                    {
+                        method: "POST",
+                        body: formData,
+                    }
+                );
+
+                const scriptItem = getFirstScriptItem();
+                if (scriptItem) {
+                    scriptItem.file = scriptPayload.script_path || scriptPayload.script_file || "";
+                    syncCodeFromVisual();
+
+                    payload = await fetchJson("/api/fxml/forms/" + encodeURIComponent(requestedName), {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ content: editor.value }),
+                    });
+                }
+
+                pendingScriptUpload = null;
+            }
 
             currentForm = payload.name || requestedName;
             nameInput.value = currentForm;
@@ -1099,6 +1200,7 @@
         }
 
         currentForm = "";
+        pendingScriptUpload = null;
         nameInput.value = "";
         visualModel = buildDefaultVisualModel();
         renderVisualModel();
@@ -1262,10 +1364,26 @@
             return;
         }
 
+        if (action === "add-item-script") {
+            if (countScriptItems() >= 1) {
+                setStatus("Puoi aggiungere al massimo uno script per modulo.", "warn");
+                return;
+            }
+            addItemToRow(rootIndex, blockIndex, {
+                kind: "script",
+                file: "",
+            });
+            return;
+        }
+
         if (action === "remove-item") {
             const row = getSectionBlock(rootIndex, blockIndex);
             if (row && row.kind === "row" && Number.isInteger(itemIndex)) {
+                const removedItem = row.items[itemIndex];
                 row.items.splice(itemIndex, 1);
+                if (removedItem && removedItem.kind === "script") {
+                    pendingScriptUpload = null;
+                }
                 updateAndSync();
             }
         }
@@ -1373,6 +1491,41 @@
                 } else if (prop) {
                     item[prop] = target.value;
                 }
+                syncCodeFromVisual();
+                markDirty(true);
+            }
+            return;
+        }
+
+        if (role === "script-prop") {
+            const item = getItem(rootIndex, blockIndex, itemIndex);
+            if (item && item.kind === "script") {
+                const prop = target.dataset.prop;
+                if (prop === "file") {
+                    item.file = target.value.trim();
+                    target.value = item.file;
+                }
+                syncCodeFromVisual();
+                markDirty(true);
+            }
+            return;
+        }
+
+        if (role === "script-file") {
+            const item = getItem(rootIndex, blockIndex, itemIndex);
+            if (item && item.kind === "script") {
+                const selectedFile = target.files && target.files[0] ? target.files[0] : null;
+                const file = selectedFile ? selectedFile.name : "";
+                item.file = file;
+                pendingScriptUpload = selectedFile ? { file: selectedFile } : null;
+
+                const fileNameInput = visualSections.querySelector(
+                    `[data-role='script-prop'][data-prop='file'][data-root='${rootIndex}'][data-block='${blockIndex}'][data-item='${itemIndex}']`
+                );
+                if (fileNameInput) {
+                    fileNameInput.value = file;
+                }
+
                 syncCodeFromVisual();
                 markDirty(true);
             }

@@ -94,6 +94,43 @@ def register_fxml_api_routes(app):
             }
         )
 
+    @app.route("/api/fxml/forms/<form_name>/script", methods=["POST"])
+    def api_upload_form_script(form_name: str):
+        try:
+            safe_name = normalize_form_name(form_name)
+            forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+            form_file = form_path_from_dir(forms_dir, safe_name)
+        except ValueError:
+            return jsonify({"error": "Nome modulo non valido"}), 400
+
+        if not os.path.exists(form_file):
+            return jsonify({"error": "Salva prima il modulo FXML"}), 400
+
+        uploaded = request.files.get("script_file")
+        if uploaded is None or not uploaded.filename:
+            return jsonify({"error": "File script mancante"}), 400
+
+        _, ext = os.path.splitext(uploaded.filename)
+        ext = ext.lower()
+        if ext != ".py":
+            return jsonify({"error": "Sono consentiti solo file .py"}), 400
+
+        scripts_dir = os.path.join(forms_dir, "scripts")
+        os.makedirs(scripts_dir, exist_ok=True)
+
+        script_filename = f"{safe_name}{ext}"
+        script_path = os.path.join(scripts_dir, script_filename)
+        uploaded.save(script_path)
+
+        return jsonify(
+            {
+                "saved": True,
+                "name": safe_name,
+                "script_file": script_filename,
+                "script_path": f"scripts/{script_filename}",
+            }
+        )
+
     @app.route("/api/fxml/validate", methods=["POST"])
     def api_validate_fxml_form():
         payload = request.get_json(silent=True) or {}

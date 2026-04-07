@@ -73,6 +73,9 @@ def _parse_nodes(node, context):
     parsed = []
 
     for child in node:
+        if child.tag == "script":
+            continue
+
         if child.tag in {"variables", "var", "validate", "option"}:
             continue
 

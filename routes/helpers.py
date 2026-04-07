@@ -42,8 +42,9 @@ def form_path_from_dir(forms_dir: str, form_name: str) -> str:
 
 def validate_fxml_content(content: str):
     """Validate FXML syntax and semantic parsability."""
+    xml_root = None
     try:
-        ET.fromstring(content)
+        xml_root = ET.fromstring(content)
     except ET.ParseError as exc:
         line, column = getattr(exc, "position", (None, None))
         return False, {
@@ -52,6 +53,14 @@ def validate_fxml_content(content: str):
             "line": line,
             "column": column,
         }
+
+    if xml_root is not None:
+        script_nodes = xml_root.findall(".//script")
+        if len(script_nodes) > 1:
+            return False, {
+                "type": "semantic_error",
+                "message": "Ogni modulo puo contenere al massimo un nodo <script>.",
+            }
 
     temp_path = ""
     try:
