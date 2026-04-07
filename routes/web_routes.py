@@ -1,4 +1,7 @@
 import os
+import json
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
 
 from flask import abort, redirect, render_template, request, send_from_directory, url_for
@@ -14,8 +17,6 @@ from settings import sync_app_config
 from xmlutils import parse_fxml
 
 from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir
-
-import subprocess
 
 def _template_message_context() -> dict:
     return {
@@ -58,6 +59,50 @@ def _extract_module_script_path(fxml_path: str) -> str:
     forms_dir = os.path.dirname(fxml_path)
     script_name = os.path.basename(script_file)
     return os.path.join(forms_dir, "scripts", script_name)
+
+
+def _run_module_script(app, form_name: str, script_path: str, submitted_values: dict) -> str:
+    """Run the form-linked script and return a non-blocking warning message on failure."""
+    if not script_path:
+        return ""
+
+    if not os.path.exists(script_path):
+        warning = f"Script non trovato per il modulo '{form_name}': {script_path}"
+        app.logger.warning("[FORM] %s", warning)
+        return warning
+
+    payload = {
+        "form_name": form_name,
+        "values": submitted_values,
+    }
+
+    try:
+        result = subprocess.run(
+            [sys.executable, script_path],
+            input=json.dumps(payload, ensure_ascii=False),
+            text=True,
+            capture_output=True,
+            timeout=10,
+            check=True,
+        )
+        if result.stdout.strip():
+            app.logger.info("[FORM] Output script '%s': %s", script_path, result.stdout.strip())
+        return ""
+    except subprocess.TimeoutExpired:
+        warning = "Lo script associato al modulo ha superato il tempo massimo (10s)."
+        app.logger.warning("[FORM] %s Script: %s", warning, script_path)
+        return warning
+    except subprocess.CalledProcessError as exc:
+        stderr = (exc.stderr or "").strip()
+        warning = "Lo script associato al modulo ha restituito un errore."
+        if stderr:
+            warning = f"{warning} Dettaglio: {stderr}"
+        app.logger.warning("[FORM] Script fallito '%s': %s", script_path, stderr or "errore sconosciuto")
+        return warning
+    except Exception as exc:  # pragma: no cover - safeguard branch
+        warning = f"Errore durante l'esecuzione dello script associato: {exc}"
+        app.logger.warning("[FORM] %s", warning)
+        return warning
 
 
 def register_web_routes(app):
@@ -231,15 +276,13 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         form_attributes, nodes, variables, form_data, conditionals, variable_defs = parse_fxml(fxml_path, submitted_values)
 
         if request.method == "POST":
+            script_warning = ""
+
             ## Executing associated script if defined in the form
             script_path = _extract_module_script_path(fxml_path)
             if script_path:
                 app.logger.info("[FORM] Script collegato al modulo '%s': %s", form_name, script_path)
-                try:
-                    result = subprocess.run(["python", script_path], capture_output=True, text=True, check=True)
-                    app.logger.info("[FORM] Output script '%s': %s", script_path, result.stdout)
-                except subprocess.CalledProcessError as exc:
-                    app.logger.error("[FORM] Errore esecuzione script '%s': %s", script_path, exc.stderr)
+                script_warning = _run_module_script(app, form_name, script_path, submitted_values)
             else:
                 app.logger.info("[FORM] Nessun script collegato al modulo '%s'", form_name)
             
@@ -256,6 +299,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
                 form_name=form_name,
                 form_attributes=form_attributes,
                 pdf_result=pdf_result,
+                script_warning=script_warning,
             )
 
         return render_template(

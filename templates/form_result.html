@@ -9,6 +9,12 @@
 
     <body style="--primary-color: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --secondary-color: {{ config.get('SECONDARY_COLOR', '#4b5563') }};">
         <main class="container">
+            {% if script_warning %}
+            <div class="warning-message" style="background-color: #fff3cd; border: 1px solid #ffe69c; color: #664d03; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+                <strong>⚠ Avviso script</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.95em;">{{ script_warning }}</p>
+            </div>
+            {% endif %}
             {% if pdf_result and pdf_result.success %}
             <div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
                 <strong>✓ Modulo inviato con successo!</strong>
