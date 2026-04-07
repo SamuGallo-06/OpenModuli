@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from rich.console import Console
+from time import sleep
 
 from pdfutils import set_program_name
 from routes.fxml_api_routes import register_fxml_api_routes
@@ -36,25 +37,30 @@ OPENMODULI_ASCII_ART = r"""
 """
 
 def open_moduli_init():
-    console.print("[green][INFO][/green] Avvio...")
+    console.print()
+    console.print(OPENMODULI_ASCII_ART, style="cyan bold")
+    sleep(2)
+    console.print("[blue][INFO][/blue] Caricamento della configurazione in corso...")
+    sleep(0.5)
     load_settings(app)
     if settings.get("general", {}).get("first_access", "true") == "true":
         console.print("[blue][INFO][/blue] Prima configurazione rilevata, avvio procedura guidata...")
+        sleep(0.5)
         first_start_setup()
 
     load_settings(app)
     program_name = settings.get("entity", {}).get("entity_name") or PROGRAM_NAME
     set_program_name(program_name)
     console.print("[blue][INFO][/blue] Caricamento delle rotte del server...")
+    sleep(0.5)
     register_web_routes(app)
     console.print("[blue][INFO][/blue] Caricamento delle rotte API...")
+    sleep(0.5)
     register_fxml_api_routes(app)
 
-    console.print("[green][INFO][/green] Avvio completato.")
-    console.print()
-    console.print(OPENMODULI_ASCII_ART, style="cyan bold")
-
 if __name__ == "__main__":
+    console.print("[green][INFO][/green] Avvio...")
+    sleep(2)  # Simulate startup delay for better UX
     open_moduli_init()    
     requested_port = int(os.environ.get("PORT", "5000"))
     port = _find_available_port(requested_port)
