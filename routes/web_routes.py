@@ -115,7 +115,7 @@ def register_web_routes(app):
     @app.route("/admin/settings/change-psswd", methods=["POST"])
     def change_password():
         """@brief Gestisce la richiesta di cambio password amministratore.
-
+urce /path/completo/a/openmoduli/venv/bin/activate
         @details
         Verifica password corrente hashata, aggiorna il valore e persiste su XML.
 

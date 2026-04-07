@@ -1,5 +1,6 @@
 pdfs/
 forms/
 .venv/
+venv/
 __pycache__/
 settings/
