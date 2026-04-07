@@ -23,8 +23,8 @@ DEFAULT_SETTINGS = {
         "entity_phone": "",
     },
     "personalization": {
-        "primary_color": "",
-        "secondary_color": "",
+        "primary_color": "#1d4ed8",
+        "secondary_color": "#4b5563",
         "background_image": "",
     },
     "access": {
