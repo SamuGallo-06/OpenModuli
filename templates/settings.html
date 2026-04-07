@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Impostazioni - OpenModuli</title>
+        <title>Impostazioni - {{ config.get('ENTITY_NAME', 'OpenModuli') }}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="{{ url_for('static', filename='admin.js') }}"></script>
     </head>
-    <body>
+    <body style="--primary-color: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --secondary-color: {{ config.get('SECONDARY_COLOR', '#4b5563') }};">
         <!--! @file settings.html
             @brief Settings page template for OpenModuli.
             
@@ -19,29 +19,57 @@
         -->
         <main class="container">
             <header>
-                <h1>Impostazioni - OpenModuli</h1>
+                {% set logo = config.get('ENTITY_LOGO', '') %}
+                {% if logo and logo.startswith('static/') %}
+                    <img src="{{ url_for('static', filename=logo[7:]) }}" alt="Logo" class="asset-image" style="max-width:120px;margin:0 auto 12px auto;" />
+                {% endif %}
+                <h1>Impostazioni - {{ config.get('ENTITY_NAME', 'OpenModuli') }}</h1>
             </header>
 
+            {% if message %}
+                <div class="banner banner-{{ message_type or 'info' }}">{{ message }}</div>
+            {% endif %}
+
             <div>
-                <form action="/admin/settings/save" method="POST" enctype="multipart/form-data">
-                    <!--** Here goes the settings for defining path
-                    - Form files are stored in a specific directory, and generated PDFs in another. 
-                    Here the admin can set those paths. */ -->
+                <form action="{{ url_for('save_settings') }}" method="POST" enctype="multipart/form-data">
+                    <section title="Generali">
+                        <span>Lingua: </span><input type="text" name="language" value="{{ settings_data.get('general', {}).get('language', 'it') }}" /><br/>
+                    </section>
                     <section title="Percorsi">
-                        <span>Percorso dei moduli: </span><input type="text" name="forms_path"/><br/>
-                        <span>Percorso dei PDF: </span><input type="text" name="pdf_path"/><br/>
+                        <span>Percorso dei moduli: </span><input type="text" name="forms_path" value="{{ settings_data.get('paths', {}).get('forms_path', 'forms') }}" /><br/>
+                        <span>Percorso dei PDF: </span><input type="text" name="pdf_path" value="{{ settings_data.get('paths', {}).get('pdf_path', 'pdfs') }}" /><br/>
                     </section>
                     <section title="Informazioni Ente">
-                        <span>Logo: </span><input type="file" name="logo_image"/><button>Ripristina</button><br/>
-                        <span>Nome Ente: </span><input type="text" name="entity_name"/><button>Ripristina</button><br/>
-                        <span>Indirizzo:</span><input type="text" name="entity_address"/><button>Ripristina</button><br/>
-                        <span>Email: </span><input type="text" name="entity_contacts"/><button>Ripristina</button><br/>
-                        <span>Telefono: </span><input type="text" name="entity_phone"/><button>Ripristina</button><br/>
+                        <span>Logo: </span><input type="file" name="logo_image"/>
+                        {% set logo_value = settings_data.get('entity', {}).get('logo_image', '') %}
+                        {% if logo_value %}
+                            <div class="asset-preview">
+                                {% if logo_value.startswith('static/') %}
+                                    <img src="{{ url_for('static', filename=logo_value[7:]) }}" alt="Logo attuale" class="asset-image" />
+                                {% endif %}
+                                <small>{{ logo_value }}</small>
+                            </div>
+                        {% endif %}
+                        <br/>
+                        <span>Nome Ente: </span><input type="text" name="entity_name" value="{{ settings_data.get('entity', {}).get('entity_name', 'OpenModuli') }}" /><br/>
+                        <span>Indirizzo:</span><input type="text" name="entity_address" value="{{ settings_data.get('entity', {}).get('entity_address', '') }}" /><br/>
+                        <span>Email / Contatti: </span><input type="text" name="entity_contacts" value="{{ settings_data.get('entity', {}).get('entity_contacts', '') }}" /><br/>
+                        <span>Telefono: </span><input type="text" name="entity_phone" value="{{ settings_data.get('entity', {}).get('entity_phone', '') }}" /><br/>
                     </section>
                     <section title="Personalizzazione">
-                        <span>Colore primario: </span><input type="color" name="primary_color"/><button>Ripristina</button><br/>
-                        <span>Colore secondario: </span><input type="color" name="secondary_color"/><button>Ripristina</button><br/>
-                        <span>Immagine di Sfondo: </span><input type="file" name="background_image"/><button>Ripristina</button><br/>
+                        <span>Colore primario: </span><input type="color" name="primary_color" value="{{ settings_data.get('personalization', {}).get('primary_color', '') or '#1a3a4a' }}" /><br/>
+                        <span>Colore secondario: </span><input type="color" name="secondary_color" value="{{ settings_data.get('personalization', {}).get('secondary_color', '') or '#555555' }}" /><br/>
+                        <span>Immagine di Sfondo: </span><input type="file" name="background_image" />
+                        {% set background_value = settings_data.get('personalization', {}).get('background_image', '') %}
+                        {% if background_value %}
+                            <div class="asset-preview">
+                                {% if background_value.startswith('static/') %}
+                                    <img src="{{ url_for('static', filename=background_value[7:]) }}" alt="Sfondo attuale" class="asset-image" />
+                                {% endif %}
+                                <small>{{ background_value }}</small>
+                            </div>
+                        {% endif %}
+                        <br/>
                     </section>
                     <p>
                         <button type="submit">Salva Cambiamenti</button>
@@ -51,7 +79,7 @@
             </div>
 
             <div>
-                <form action="/admin/settings/change-psswd" method="POST" enctype="multipart/form-data">
+                <form action="{{ url_for('change_password') }}" method="POST" enctype="multipart/form-data">
                     <section title="Password">
                         <span>Password attuale: </span><input type="password" name="current_password"/><br/>
                         <span>Nuova Password: </span><input type="password" name="new_password"/><br/>

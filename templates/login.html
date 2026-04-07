@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login - OpenModuli</title>
+        <title>Login - {{ config.get('ENTITY_NAME', 'OpenModuli') }}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}" />
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
     </head>
-    <body>
+    <body style="--primary-color: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --secondary-color: {{ config.get('SECONDARY_COLOR', '#4b5563') }};">
         <!--! @file login.html
             @brief Login template for OpenModuli.
             
@@ -32,7 +32,11 @@
         
         <main class="container">
             <header>
-                <h1>Pannello di Controllo - OpenModuli</h1>
+                {% set logo = config.get('ENTITY_LOGO', '') %}
+                {% if logo and logo.startswith('static/') %}
+                    <img src="{{ url_for('static', filename=logo[7:]) }}" alt="Logo" class="asset-image" style="max-width:120px;margin:0 auto 12px auto;" />
+                {% endif %}
+                <h1>Pannello di Controllo - {{ config.get('ENTITY_NAME', 'OpenModuli') }}</h1>
             </header>
             <!--! @section footer
                 @brief Application footer.
@@ -41,6 +45,9 @@
 
             <div class="login-box">
                 <img class="login-icon" src="{{ url_for('static', filename='icons/person.png') }}"/>
+                {% if error %}
+                    <div class="banner banner-error">{{ error }}</div>
+                {% endif %}
                 <form action="/login" method="POST" class="login-form">
                     <label for="password">Password:</label><br/>
                     <input type="password" id="password" name="password" placeholder="Inserisci la password" required /><br/><br/>

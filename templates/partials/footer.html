@@ -3,6 +3,13 @@
     @details Contains copyright information and author attribution.
 -->
 <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
-    <p>OpenModuli - Open Source Self-hosted forms</p>
+    <p>{{ config.get('ENTITY_NAME', 'OpenModuli') }} - Open Source Self-hosted forms</p>
+    {% if config.get('ENTITY_ADDRESS') or config.get('ENTITY_CONTACTS') or config.get('ENTITY_PHONE') %}
+        <p>
+            {% if config.get('ENTITY_ADDRESS') %}{{ config.get('ENTITY_ADDRESS') }}{% endif %}
+            {% if config.get('ENTITY_CONTACTS') %}{% if config.get('ENTITY_ADDRESS') %} | {% endif %}{{ config.get('ENTITY_CONTACTS') }}{% endif %}
+            {% if config.get('ENTITY_PHONE') %}{% if config.get('ENTITY_ADDRESS') or config.get('ENTITY_CONTACTS') %} | {% endif %}{{ config.get('ENTITY_PHONE') }}{% endif %}
+        </p>
+    {% endif %}
     <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
 </footer>

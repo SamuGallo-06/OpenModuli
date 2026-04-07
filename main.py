@@ -13,9 +13,10 @@ from utils import _find_available_port
 
 app = Flask(__name__)
 app.register_blueprint(server_bp)
-app.config["ADMIN_PASSWORD"] = "admin"
 
 PROGRAM_NAME = "OpenModuli"
+
+console = Console()
 
 OPENMODULI_ASCII_ART = r"""
     ,----..                                            ____
@@ -34,21 +35,21 @@ OPENMODULI_ASCII_ART = r"""
                 `---`      `----'             '---'                       `----'                           ---`-'
 """
 
-console = Console()
-
 def open_moduli_init():
     console.print("[green][INFO][/green] Avvio...")
     load_settings(app)
-    if(settings.get("general", {}).get("first_access", "true") == "true"):
+    if settings.get("general", {}).get("first_access", "true") == "true":
         console.print("[blue][INFO][/blue] Prima configurazione rilevata, avvio procedura guidata...")
         first_start_setup()
-    else:
-        set_program_name(PROGRAM_NAME)
-        console.print("[blue][INFO][/blue] Caricamento delle rotte del server...")
-        register_web_routes(app)
-        console.print("[blue][INFO][/blue] Caricamento delle rotte API...")
-        register_fxml_api_routes(app)
-        
+
+    load_settings(app)
+    program_name = settings.get("entity", {}).get("entity_name") or PROGRAM_NAME
+    set_program_name(program_name)
+    console.print("[blue][INFO][/blue] Caricamento delle rotte del server...")
+    register_web_routes(app)
+    console.print("[blue][INFO][/blue] Caricamento delle rotte API...")
+    register_fxml_api_routes(app)
+
     console.print("[green][INFO][/green] Avvio completato.")
     console.print()
     console.print(OPENMODULI_ASCII_ART, style="cyan bold")

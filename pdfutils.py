@@ -29,18 +29,64 @@ COLOR_MAP = {
 }
 
 CURRENT_PROGRAM_NAME = "OpenModuli"
+CURRENT_PDFS_DIR = os.path.join(os.path.dirname(__file__), "pdfs")
+CURRENT_ENTITY_NAME = "OpenModuli"
+CURRENT_ENTITY_CONTACTS = ""
+CURRENT_ENTITY_ADDRESS = ""
+CURRENT_ENTITY_PHONE = ""
+CURRENT_LOGO_PATH = ""
+CURRENT_BACKGROUND_IMAGE = ""
+CURRENT_PRIMARY_COLOR = "#1a3a4a"
+CURRENT_SECONDARY_COLOR = "#555555"
 
 
 def _ensure_pdfs_dir():
     """Ensure the pdfs directory exists."""
-    pdfs_dir = os.path.join(os.path.dirname(__file__), "pdfs")
-    os.makedirs(pdfs_dir, exist_ok=True)
-    return pdfs_dir
+    os.makedirs(CURRENT_PDFS_DIR, exist_ok=True)
+    return CURRENT_PDFS_DIR
 
 
 def set_program_name(program_name: str):
     global CURRENT_PROGRAM_NAME
     CURRENT_PROGRAM_NAME = (program_name or "").strip() or "OpenModuli"
+
+
+def set_pdf_path(pdf_path: str):
+    global CURRENT_PDFS_DIR
+    relative_path = (pdf_path or "pdfs").strip() or "pdfs"
+    CURRENT_PDFS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
+
+
+def set_branding(
+    entity_name: str = "",
+    logo_path: str = "",
+    primary_color: str = "",
+    secondary_color: str = "",
+    background_image: str = "",
+    contacts: str = "",
+    address: str = "",
+    phone: str = "",
+):
+    global CURRENT_ENTITY_NAME, CURRENT_ENTITY_CONTACTS, CURRENT_ENTITY_ADDRESS, CURRENT_ENTITY_PHONE
+    global CURRENT_LOGO_PATH, CURRENT_BACKGROUND_IMAGE, CURRENT_PRIMARY_COLOR, CURRENT_SECONDARY_COLOR
+
+    CURRENT_ENTITY_NAME = (entity_name or "OpenModuli").strip() or "OpenModuli"
+    CURRENT_LOGO_PATH = (logo_path or "").strip()
+    CURRENT_BACKGROUND_IMAGE = (background_image or "").strip()
+    CURRENT_ENTITY_CONTACTS = (contacts or "").strip()
+    CURRENT_ENTITY_ADDRESS = (address or "").strip()
+    CURRENT_ENTITY_PHONE = (phone or "").strip()
+    CURRENT_PRIMARY_COLOR = (primary_color or "#1a3a4a").strip() or "#1a3a4a"
+    CURRENT_SECONDARY_COLOR = (secondary_color or "#555555").strip() or "#555555"
+
+
+def _resolve_color(value: str, fallback: str) -> str:
+    if not value:
+        return fallback
+    value = value.strip()
+    if value.startswith("#"):
+        return value
+    return COLOR_MAP.get(value.lower(), fallback)
 
 
 def create_pdf_from_form_data(
@@ -92,7 +138,7 @@ def create_pdf_from_form_data(
             'CustomTitle',
             parent=styles['Heading1'],
             fontSize=18,
-            textColor=HexColor('#1a3a4a'),
+            textColor=HexColor(_resolve_color(CURRENT_PRIMARY_COLOR, '#1a3a4a')),
             spaceAfter=6,
             alignment=1,  # Center
         )
@@ -109,7 +155,7 @@ def create_pdf_from_form_data(
             'Label',
             parent=styles['Normal'],
             fontSize=10,
-            textColor=HexColor('#555555'),
+            textColor=HexColor(_resolve_color(CURRENT_SECONDARY_COLOR, '#555555')),
             fontName='Helvetica-Bold',
         )
 
@@ -117,7 +163,7 @@ def create_pdf_from_form_data(
             'SectionTitle',
             parent=styles['Heading2'],
             fontSize=13,
-            textColor=HexColor('#1a3a4a'),
+            textColor=HexColor(_resolve_color(CURRENT_PRIMARY_COLOR, '#1a3a4a')),
             spaceBefore=8,
             spaceAfter=8,
         )
@@ -185,7 +231,16 @@ def _add_footer(canvas_obj, doc):
     canvas_obj.saveState()
     
     # Footer text
-    footer_text = f"Modulo generato con {CURRENT_PROGRAM_NAME} - Iscrizione Online"
+    footer_parts = [f"Modulo generato con {CURRENT_PROGRAM_NAME}"]
+    if CURRENT_ENTITY_NAME and CURRENT_ENTITY_NAME != CURRENT_PROGRAM_NAME:
+        footer_parts.append(CURRENT_ENTITY_NAME)
+    if CURRENT_ENTITY_ADDRESS:
+        footer_parts.append(CURRENT_ENTITY_ADDRESS)
+    if CURRENT_ENTITY_CONTACTS:
+        footer_parts.append(CURRENT_ENTITY_CONTACTS)
+    if CURRENT_ENTITY_PHONE:
+        footer_parts.append(CURRENT_ENTITY_PHONE)
+    footer_text = " - ".join(footer_parts)
     canvas_obj.setFont("Helvetica", 8)
     canvas_obj.setFillColor(grey)
     

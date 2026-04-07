@@ -5,14 +5,15 @@ from flask import abort, jsonify, request, url_for
 from utils import _json_safe
 from xmlutils import extract_runtime_outputs, parse_fxml
 
-from routes.helpers import form_path, normalize_form_name, validate_fxml_content
+from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir, validate_fxml_content
 
 
 def register_fxml_api_routes(app):
     @app.route("/api/form/<form_name>/runtime", methods=["POST"])
     def form_runtime(form_name: str):
         try:
-            fxml_path = form_path(app.root_path, form_name)
+            forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+            fxml_path = form_path_from_dir(forms_dir, form_name)
         except ValueError:
             abort(404)
 
@@ -35,12 +36,13 @@ def register_fxml_api_routes(app):
 
     @app.route("/api/fxml/forms", methods=["GET"])
     def api_list_fxml_forms():
-        forms_dir = os.path.join(app.root_path, "forms")
+        forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
         forms = []
 
-        for file in os.listdir(forms_dir):
-            if file.endswith(".fxml"):
-                forms.append(os.path.basename(file).split(".")[0])
+        if os.path.isdir(forms_dir):
+            for file in os.listdir(forms_dir):
+                if file.endswith(".fxml"):
+                    forms.append(os.path.basename(file).split(".")[0])
 
         forms.sort()
         return jsonify({"forms": forms})
@@ -48,7 +50,8 @@ def register_fxml_api_routes(app):
     @app.route("/api/fxml/forms/<form_name>", methods=["GET"])
     def api_read_fxml_form(form_name: str):
         try:
-            path = form_path(app.root_path, form_name)
+            forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+            path = form_path_from_dir(forms_dir, form_name)
         except ValueError:
             return jsonify({"error": "Nome modulo non valido"}), 400
 
@@ -70,7 +73,8 @@ def register_fxml_api_routes(app):
 
         try:
             safe_name = normalize_form_name(form_name)
-            destination = form_path(app.root_path, safe_name)
+            forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+            destination = form_path_from_dir(forms_dir, safe_name)
         except ValueError:
             return jsonify({"error": "Nome modulo non valido"}), 400
 

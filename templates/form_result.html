@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     </head>
 
-    <body>
+    <body style="--primary-color: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --secondary-color: {{ config.get('SECONDARY_COLOR', '#4b5563') }};">
         <main class="container">
             {% if pdf_result and pdf_result.success %}
             <div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
@@ -24,9 +24,6 @@
             {% endif %}
             <a href="{{ pdf_result.pdf_url }}" target="_blank"><button type="button">Scarica PDF</button></a>
         </main>
-        <footer style="margin-top: 40px; font-size: 0.9em; color: #555;">
-            <p>OpenModuli - Open Source Self-hosted forms</p>
-            <p>Creato da <a href="https://github.com/SamuGallo-06/" target="_blank">Samuele Gallicani</a>, © 2026 Samuele Gallicani</p>
-        </footer>
+        {% include 'partials/footer.html' %}
     </body>
 </html>

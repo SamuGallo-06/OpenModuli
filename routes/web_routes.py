@@ -1,14 +1,38 @@
 import os
 
 from flask import abort, redirect, render_template, request, send_from_directory, url_for
+from werkzeug.utils import secure_filename
 
 from pdfutils import create_pdf_from_form_data
-from settings import hash_password, save_settings as persist_settings
+from settings import get_all_settings, hash_password, save_settings as persist_settings
 from settings import settings as app_settings
 from settings import sync_app_config, verify_password
 from xmlutils import parse_fxml
 
-from routes.helpers import form_path, normalize_form_name
+from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir
+
+
+def _template_message_context() -> dict:
+    return {
+        "settings_data": get_all_settings(),
+        "message": request.args.get("message", ""),
+        "message_type": request.args.get("message_type", ""),
+    }
+
+
+def _save_uploaded_asset(app, file_storage, relative_folder: str) -> str:
+    if not file_storage or not getattr(file_storage, "filename", ""):
+        return ""
+
+    filename = secure_filename(file_storage.filename)
+    if not filename:
+        return ""
+
+    target_dir = os.path.join(app.root_path, relative_folder)
+    os.makedirs(target_dir, exist_ok=True)
+    destination = os.path.join(target_dir, filename)
+    file_storage.save(destination)
+    return os.path.relpath(destination, app.root_path)
 
 
 def register_web_routes(app):
@@ -37,10 +61,11 @@ def register_web_routes(app):
         """
         forms = []
 
-        forms_dir = os.path.join(app.root_path, "forms")
-        for file in os.listdir(forms_dir):
-            if file.endswith(".fxml"):
-                forms.append(os.path.basename(file).split(".")[0])
+        forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+        if os.path.isdir(forms_dir):
+            for file in os.listdir(forms_dir):
+                if file.endswith(".fxml"):
+                    forms.append(os.path.basename(file).split(".")[0])
 
         return render_template("admin.html", forms=forms)
 
@@ -50,15 +75,42 @@ def register_web_routes(app):
 
         @return Template HTML settings.
         """
-        return render_template("settings.html")
+        return render_template("settings.html", **_template_message_context())
 
     @app.route("/admin/settings/save", methods=["POST"])
     def save_settings():
-        """@brief Placeholder per salvataggio impostazioni da form admin.
+        """@brief Salva le impostazioni amministrative nel file XML.
 
         @return Redirect verso la pagina impostazioni.
         """
-        return redirect(url_for("settings"))
+        app_settings.setdefault("general", {})
+        app_settings.setdefault("paths", {})
+        app_settings.setdefault("entity", {})
+        app_settings.setdefault("personalization", {})
+        app_settings.setdefault("access", {})
+
+        app_settings["general"]["language"] = (request.form.get("language", "it") or "it").strip() or "it"
+        app_settings["paths"]["forms_path"] = (request.form.get("forms_path", "forms") or "forms").strip() or "forms"
+        app_settings["paths"]["pdf_path"] = (request.form.get("pdf_path", "pdfs") or "pdfs").strip() or "pdfs"
+        app_settings["entity"]["entity_name"] = (request.form.get("entity_name", "OpenModuli") or "OpenModuli").strip() or "OpenModuli"
+        app_settings["entity"]["entity_address"] = (request.form.get("entity_address", "") or "").strip()
+        app_settings["entity"]["entity_contacts"] = (request.form.get("entity_contacts", "") or "").strip()
+        app_settings["entity"]["entity_phone"] = (request.form.get("entity_phone", "") or "").strip()
+        app_settings["personalization"]["primary_color"] = (request.form.get("primary_color", "") or "").strip()
+        app_settings["personalization"]["secondary_color"] = (request.form.get("secondary_color", "") or "").strip()
+
+        logo_path = _save_uploaded_asset(app, request.files.get("logo_image"), os.path.join("static", "uploads", "branding"))
+        background_path = _save_uploaded_asset(app, request.files.get("background_image"), os.path.join("static", "uploads", "branding"))
+
+        if logo_path:
+            app_settings["entity"]["logo_image"] = logo_path
+        if background_path:
+            app_settings["personalization"]["background_image"] = background_path
+
+        persist_settings()
+        sync_app_config(app)
+
+        return redirect(url_for("settings", message="Impostazioni salvate con successo", message_type="success"))
 
     @app.route("/admin/settings/change-psswd", methods=["POST"])
     def change_password():
@@ -75,12 +127,21 @@ def register_web_routes(app):
 
         stored_hash = app.config.get("ADMIN_PASSWORD_HASH", "")
 
+        message = "Password aggiornata con successo"
+        message_type = "success"
+
         if not verify_password(old_password, stored_hash):
             print("[SETTINGS] Failed to change password: current password is incorrect")
+            message = "Password corrente non valida"
+            message_type = "error"
         elif not new_password:
             print("[SETTINGS] Failed to change password: new password is empty")
+            message = "La nuova password non puo essere vuota"
+            message_type = "error"
         elif new_password != new_password_confirm:
             print("[SETTINGS] Failed to change password: new password and confirmation do not match")
+            message = "La nuova password e la conferma non coincidono"
+            message_type = "error"
         else:
             app_settings.setdefault("access", {})
             app_settings["access"]["current_password"] = hash_password(new_password)
@@ -88,7 +149,7 @@ def register_web_routes(app):
             sync_app_config(app)
             print("[SETTINGS] Password changed successfully")
 
-        return redirect(url_for("settings"))
+        return redirect(url_for("settings", message=message, message_type=message_type))
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
@@ -117,7 +178,8 @@ def register_web_routes(app):
         In POST elabora i dati inviati e crea il PDF di riepilogo.
         """
         try:
-            fxml_path = form_path(app.root_path, form_name)
+            forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+            fxml_path = form_path_from_dir(forms_dir, form_name)
         except ValueError:
             abort(404)
 
@@ -161,7 +223,7 @@ def register_web_routes(app):
         @param filename Nome file PDF richiesto.
         @return Risposta file come allegato.
         """
-        pdf_dir = os.path.join(app.root_path, "pdfs")
+        pdf_dir = os.path.join(app.root_path, app.config.get("PDF_PATH", "pdfs"))
         return send_from_directory(pdf_dir, filename, as_attachment=True)
 
     @app.route("/upload_form", methods=["POST"])
@@ -183,7 +245,8 @@ def register_web_routes(app):
         if not uploaded_name.endswith(".fxml"):
             abort(400)
 
-        dest = form_path(app.root_path, name)
+        forms_dir = resolve_forms_dir(app.root_path, app.config.get("FORMS_PATH"))
+        dest = form_path_from_dir(forms_dir, name)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         file.save(dest)
 

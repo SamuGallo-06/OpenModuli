@@ -16,10 +16,27 @@ def normalize_form_name(form_name: str) -> str:
     return normalized
 
 
-def form_path(root_path: str, form_name: str) -> str:
-    """Build the absolute path of a form from its name."""
+def form_path(root_path: str, form_name: str, forms_dir: str | None = None) -> str:
+    """Build the absolute path of a form from its name.
+
+    The forms directory can be overridden by a configured path relative to the
+    application root. The helper still protects against path traversal by
+    validating the logical form name.
+    """
     safe_name = normalize_form_name(form_name)
-    forms_dir = os.path.join(root_path, "forms")
+    resolved_forms_dir = forms_dir or os.path.join(root_path, "forms")
+    return os.path.join(resolved_forms_dir, f"{safe_name}.fxml")
+
+
+def resolve_forms_dir(root_path: str, configured_forms_path: str | None = None) -> str:
+    """Resolve the absolute forms directory from a configured relative path."""
+    relative_path = (configured_forms_path or "forms").strip() or "forms"
+    return os.path.join(root_path, relative_path)
+
+
+def form_path_from_dir(forms_dir: str, form_name: str) -> str:
+    """Resolve a form path inside an already resolved forms directory."""
+    safe_name = normalize_form_name(form_name)
     return os.path.join(forms_dir, f"{safe_name}.fxml")
 
 
