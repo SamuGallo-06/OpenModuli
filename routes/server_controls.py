@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+from utilities.server_manager import reboot_system, shutdown_system
 
 server_bp = Blueprint('server', __name__, url_prefix='/server')
 
@@ -8,10 +9,10 @@ def status():
 
 @server_bp.route("/restart")
 def restart():
-    # logica di restart
-    return jsonify({"message": "restarting"})
+    reboot_system()
+    return jsonify({"status": "restarting"})
 
-@server_bp.route("/shudown")
+@server_bp.route("/shutdown")
 def shutdown():
-    # logica di restart
-    return jsonify({"message": "[SERVER] Shutting Down System"})
+    shutdown_system()
+    return jsonify({"status": "shutting down"})
