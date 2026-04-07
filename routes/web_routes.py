@@ -1,12 +1,15 @@
 import os
 
 from flask import abort, redirect, render_template, request, send_from_directory, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
+from extensions import db
+from models.user import User
 from pdfutils import create_pdf_from_form_data
-from settings import get_all_settings, hash_password, save_settings as persist_settings
+from settings import get_all_settings, save_settings as persist_settings
 from settings import settings as app_settings
-from settings import sync_app_config, verify_password
+from settings import sync_app_config
 from xmlutils import parse_fxml
 
 from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir
@@ -54,6 +57,7 @@ def register_web_routes(app):
         return render_template("index.html")
 
     @app.route("/admin")
+    @login_required
     def admin():
         """@brief Mostra il pannello amministrativo con i moduli disponibili.
 
@@ -70,6 +74,7 @@ def register_web_routes(app):
         return render_template("admin.html", forms=forms)
 
     @app.route("/admin/settings")
+    @login_required
     def settings():
         """@brief Mostra la pagina impostazioni amministrative.
 
@@ -78,6 +83,7 @@ def register_web_routes(app):
         return render_template("settings.html", **_template_message_context())
 
     @app.route("/admin/settings/save", methods=["POST"])
+    @login_required
     def save_settings():
         """@brief Salva le impostazioni amministrative nel file XML.
 
@@ -113,6 +119,7 @@ def register_web_routes(app):
         return redirect(url_for("settings", message="Impostazioni salvate con successo", message_type="success"))
 
     @app.route("/admin/settings/change-psswd", methods=["POST"])
+    @login_required
     def change_password():
         """@brief Gestisce la richiesta di cambio password amministratore.
 urce /path/completo/a/openmoduli/venv/bin/activate
@@ -125,12 +132,15 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         new_password = str(request.form.get("new_password", ""))
         new_password_confirm = str(request.form.get("confirm_password", ""))
 
-        stored_hash = app.config.get("ADMIN_PASSWORD_HASH", "")
-
         message = "Password aggiornata con successo"
         message_type = "success"
 
-        if not verify_password(old_password, stored_hash):
+        db_user = User.query.get(current_user.id)
+        if db_user is None:
+            print("[SETTINGS] Failed to change password: user session is stale")
+            message = "Sessione utente non valida"
+            message_type = "error"
+        elif not db_user.check_password(old_password):
             print("[SETTINGS] Failed to change password: current password is incorrect")
             message = "Password corrente non valida"
             message_type = "error"
@@ -143,10 +153,8 @@ urce /path/completo/a/openmoduli/venv/bin/activate
             message = "La nuova password e la conferma non coincidono"
             message_type = "error"
         else:
-            app_settings.setdefault("access", {})
-            app_settings["access"]["current_password"] = hash_password(new_password)
-            persist_settings()
-            sync_app_config(app)
+            db_user.set_password(new_password)
+            db.session.commit()
             print("[SETTINGS] Password changed successfully")
 
         return redirect(url_for("settings", message=message, message_type=message_type))
@@ -157,14 +165,25 @@ urce /path/completo/a/openmoduli/venv/bin/activate
 
         @return Template login (GET), login con errore, oppure redirect ad admin.
         """
+        if current_user.is_authenticated:
+            return redirect(url_for("admin"))
+
         if request.method == "POST":
+            username = (request.form.get("username", "") or "").strip()
             password = request.form.get("password", "")
-            stored_hash = app.config.get("ADMIN_PASSWORD_HASH", "")
-            if not verify_password(password, stored_hash):
+            user = User.query.filter_by(username=username).first()
+            if not user or not user.is_active or not user.check_password(password):
                 return render_template("login.html", error="Invalid password")
+            login_user(user, remember=True)
             return redirect(url_for("admin"))
 
         return render_template("login.html")
+
+    @app.route("/logout", methods=["GET"])
+    @login_required
+    def logout():
+        logout_user()
+        return redirect(url_for("login"))
 
     @app.route("/form/<form_name>", methods=["GET", "POST"])
     def form_view(form_name: str):
@@ -227,6 +246,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         return send_from_directory(pdf_dir, filename, as_attachment=True)
 
     @app.route("/upload_form", methods=["POST"])
+    @login_required
     def upload_form():
         """@brief Carica un file FXML e lo salva nella directory moduli.
 
@@ -253,6 +273,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         return redirect(url_for("form_view", form_name=name))
 
     @app.route("/create_form", methods=["GET", "POST"])
+    @login_required
     def create_form():
         """@brief Apre l'editor/creatore modulo precompilando il nome se fornito.
 

@@ -32,6 +32,10 @@ function onSettingsClicked(){
     window.location.href = '/admin/settings';
 }
 
+function onLogoutClicked(){
+    window.location.href = '/logout';
+}
+
 function onReloadConfigurationClicked(){
     
 }

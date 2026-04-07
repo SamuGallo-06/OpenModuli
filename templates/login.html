@@ -49,8 +49,10 @@
                     <div class="banner banner-error">{{ error }}</div>
                 {% endif %}
                 <form action="/login" method="POST" class="login-form">
+                    <label for="username">Username:</label><br/>
+                    <input type="text" id="username" name="username" placeholder="Nome Utente" required /><br/><br/>
                     <label for="password">Password:</label><br/>
-                    <input type="password" id="password" name="password" placeholder="Inserisci la password" required /><br/><br/>
+                    <input type="password" id="password" name="password" placeholder="Password" required /><br/><br/>
                     <!--
                     <label for="otp-code">Codice OTP:</label><br/>
                     <input type="text" id="otp-code" name="otp-code" placeholder="Inserisci il codice OTP" required /><br/><br/>
