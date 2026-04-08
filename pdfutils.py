@@ -28,7 +28,7 @@ COLOR_MAP = {
     "lightgray": "#9ca3af",
 }
 
-CURRENT_PROGRAM_NAME = "OpenModuli"
+ORGANIZATION_NAME = "OpenModuli"
 CURRENT_PDFS_DIR = os.path.join(os.path.dirname(__file__), "pdfs")
 CURRENT_ENTITY_NAME = "OpenModuli"
 CURRENT_ENTITY_CONTACTS = ""
@@ -47,8 +47,8 @@ def _ensure_pdfs_dir():
 
 
 def set_program_name(program_name: str):
-    global CURRENT_PROGRAM_NAME
-    CURRENT_PROGRAM_NAME = (program_name or "").strip() or "OpenModuli"
+    global ORGANIZATION_NAME
+    ORGANIZATION_NAME = (program_name or "").strip() or "OpenModuli"
 
 
 def set_pdf_path(pdf_path: str):
@@ -231,8 +231,8 @@ def _add_footer(canvas_obj, doc):
     canvas_obj.saveState()
     
     # Footer text
-    footer_parts = [f"Modulo generato con {CURRENT_PROGRAM_NAME}"]
-    if CURRENT_ENTITY_NAME and CURRENT_ENTITY_NAME != CURRENT_PROGRAM_NAME:
+    footer_parts = [f"Modulo generato con OpenModuli, Emesso da {ORGANIZATION_NAME}"]
+    if CURRENT_ENTITY_NAME and CURRENT_ENTITY_NAME != ORGANIZATION_NAME:
         footer_parts.append(CURRENT_ENTITY_NAME)
     if CURRENT_ENTITY_ADDRESS:
         footer_parts.append(CURRENT_ENTITY_ADDRESS)
