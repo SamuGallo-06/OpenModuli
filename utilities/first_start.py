@@ -124,6 +124,30 @@ def first_start_setup(app):
         
         break
     
+    while True:
+        console.clear()
+        console.print("[bold blue]CONFIGURAZIONE GUIDATA OPEN MODULI[/bold blue]")
+        console.print("[bold]_________________________________________________________________[/bold]")
+        console.print()
+        console.print("Impostazione percorsi di salvataggio.")
+        console.print()
+        console.print(
+            "Immettere ora il percorso di salvataggio per i moduli FXML e per i PDF generati. "
+            "Lascia vuoto per usare i valori predefiniti (forms/ per i moduli e pdfs/ per i PDF)."
+        )
+        
+        pdf_path = Prompt.ask("[cyan]- Percorso PDF[/cyan]: ").strip()
+        if not pdf_path:
+            pdf_path = "pdfs/"
+        settings["paths"]["pdf_path"] = pdf_path
+
+        form_path = Prompt.ask("[cyan]- Percorso Moduli[/cyan]: ").strip()
+        if not form_path:
+            form_path = "forms/"
+        settings["paths"]["forms_path"] = form_path
+
+        break
+    
     with app.app_context():
         console.clear()
         console.print("[bold blue]CONFIGURAZIONE GUIDATA OPEN MODULI[/bold blue]")

@@ -7,8 +7,14 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='form_creator.css') }}" />
     </head>
-
-    <body>
+    {% set background_value = config.get('BACKGROUND_IMAGE', '') %}
+    {% set background_url = '' %}
+    {% if background_value.startswith('static/') %}
+        {% set background_url = url_for('static', filename=background_value[7:]) %}
+    {% elif background_value.startswith('user/') %}
+        {% set background_url = url_for('user_asset', filename=background_value[5:]) %}
+    {% endif %}
+    <body {% if background_url %}style="background-image: url('{{ background_url }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;"{% endif %}>
         <main class="container creator-shell" data-initial-form="{{ form_name or '' }}">
             <header class="creator-header">
                 <h1>Nuovo Modulo</h1>
@@ -50,6 +56,10 @@
                             <label>
                                 Titolo sezione
                                 <input id="visual-section-title" type="text" placeholder="Nuova sezione" value="Sezione" />
+                            </label>
+                            <label>
+                                Testo conferma invio
+                                <textarea id="visual-confirmation-text" placeholder="Grazie per aver inviato il modulo!" rows="2"></textarea>
                             </label>
                         </div>
 

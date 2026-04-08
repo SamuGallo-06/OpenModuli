@@ -8,7 +8,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="{{ url_for('static', filename='admin.js') }}"></script>
     </head>
-    <body style="--primary-color: {{ config.get('PRIMARY_COLOR') or '#1d4ed8' }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR') or '#1d4ed8' }}; --secondary-color: {{ config.get('SECONDARY_COLOR') or '#4b5563' }};">
+    {% set page_background_value = config.get('BACKGROUND_IMAGE', '') %}
+    {% set page_background_url = '' %}
+    {% if page_background_value.startswith('static/') %}
+        {% set page_background_url = url_for('static', filename=page_background_value[7:]) %}
+    {% elif page_background_value.startswith('user/') %}
+        {% set page_background_url = url_for('user_asset', filename=page_background_value[5:]) %}
+    {% endif %}
+    <body style="--primary-color: {{ config.get('PRIMARY_COLOR') or '#1d4ed8' }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR') or '#1d4ed8' }}; --secondary-color: {{ config.get('SECONDARY_COLOR') or '#4b5563' }};{% if page_background_url %} background-image: url('{{ page_background_url }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;{% endif %}">
         <!--! @file settings.html
             @brief Settings page template for OpenModuli.
             
@@ -65,6 +72,8 @@
                             <div class="asset-preview">
                                 {% if background_value.startswith('static/') %}
                                     <img src="{{ url_for('static', filename=background_value[7:]) }}" alt="Sfondo attuale" class="asset-image" />
+                                {% elif background_value.startswith('user/') %}
+                                    <img src="{{ url_for('user_asset', filename=background_value[5:]) }}" alt="Sfondo attuale" class="asset-image" />
                                 {% endif %}
                                 <small>{{ background_value }}</small>
                             </div>

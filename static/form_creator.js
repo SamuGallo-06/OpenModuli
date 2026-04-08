@@ -19,6 +19,7 @@
     const visualPane = document.getElementById("visual-editor-pane");
     const visualFormTitle = document.getElementById("visual-form-title");
     const visualSubmitLabel = document.getElementById("visual-submit-label");
+    const visualConfirmationText = document.getElementById("visual-confirmation-text");
     const visualSectionTitle = document.getElementById("visual-section-title");
     const addSectionButton = document.getElementById("add-section");
     const addRootPagebreakButton = document.getElementById("add-root-pagebreak");
@@ -63,6 +64,7 @@
         return {
             title: "Nuovo Modulo",
             submitLabel: "Invia",
+            confirmationText: "Grazie per aver inviato il modulo!",
             rootBlocks: [
                 {
                     kind: "section",
@@ -458,6 +460,7 @@
         const model = {
             title: form.getAttribute("title") || "Nuovo Modulo",
             submitLabel: form.getAttribute("submit_label") || "Invia",
+            confirmationText: form.getAttribute("confirmation_text") || "Grazie per aver inviato il modulo!",
             rootBlocks: [],
         };
 
@@ -588,7 +591,7 @@
     function buildXmlFromVisualModel(model) {
         const lines = [];
         lines.push(
-            `<form title="${escapeXmlAttr(model.title || "Nuovo Modulo")}" submit_label="${escapeXmlAttr(model.submitLabel || "Invia")}">`
+            `<form title="${escapeXmlAttr(model.title || "Nuovo Modulo")}" submit_label="${escapeXmlAttr(model.submitLabel || "Invia")}" confirmation_text="${escapeXmlAttr(model.confirmationText || "Grazie per aver inviato il modulo!")}">`
         );
         model.rootBlocks.forEach((block) => pushXmlBlock(lines, block, 4));
         lines.push("</form>");
@@ -666,6 +669,7 @@
     function renderVisualModel() {
         visualFormTitle.value = visualModel.title || "";
         visualSubmitLabel.value = visualModel.submitLabel || "";
+        visualConfirmationText.value = visualModel.confirmationText || "";
         visualSections.innerHTML = "";
 
         if (!visualModel.rootBlocks.length) {
@@ -1241,6 +1245,12 @@
 
     visualSubmitLabel.addEventListener("input", () => {
         visualModel.submitLabel = visualSubmitLabel.value;
+        syncCodeFromVisual();
+        markDirty(true);
+    });
+
+    visualConfirmationText.addEventListener("input", () => {
+        visualModel.confirmationText = visualConfirmationText.value;
         syncCodeFromVisual();
         markDirty(true);
     });

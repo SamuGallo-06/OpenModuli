@@ -4,7 +4,14 @@
         <title>{{ form_attributes.get('title', form_name) }}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     </head>
-    <body style="--primary-color: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --secondary-color: {{ config.get('SECONDARY_COLOR', '#4b5563') }};">
+    {% set background_value = config.get('BACKGROUND_IMAGE', '') %}
+    {% set background_url = '' %}
+    {% if background_value.startswith('static/') %}
+        {% set background_url = url_for('static', filename=background_value[7:]) %}
+    {% elif background_value.startswith('user/') %}
+        {% set background_url = url_for('user_asset', filename=background_value[5:]) %}
+    {% endif %}
+    <body {% if background_url %}style="background-image: url('{{ background_url }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;"{% endif %}>
         <main class="container">
             <header>
                 <h1>{{ form_attributes.get('title', form_name) }}</h1>
@@ -146,7 +153,7 @@
 
                 {{ render_nodes(nodes) }}
                 <br/>
-                <button type="submit">Invia Modulo</button>
+                <button type="submit">{{ form_attributes.get('submit_label', 'Invia') }}</button>
                 <button type="reset">Cancella Dati</button>       
             </form>
         </main>

@@ -9,7 +9,14 @@
         <script src="{{ url_for('static', filename='admin.js') }}" defer></script>
         <script src="{{ url_for('static', filename='navbar.js' )}}" defer></script>
     </head>
-    <body>
+    {% set background_value = config.get('BACKGROUND_IMAGE', '') %}
+    {% set background_url = '' %}
+    {% if background_value.startswith('static/') %}
+        {% set background_url = url_for('static', filename=background_value[7:]) %}
+    {% elif background_value.startswith('user/') %}
+        {% set background_url = url_for('user_asset', filename=background_value[5:]) %}
+    {% endif %}
+    <body {% if background_url %}style="background-image: url('{{ background_url }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;"{% endif %}>
         <!--! @file admin.html
             @brief Admin control panel template for OpenModuli.
             
@@ -104,6 +111,7 @@
                 <button onclick="onUploadFormClicked()">Carica Modulo</button>
                 <button onclick="onSettingsClicked()">Impostazioni</button>
                 <button onclick="onLogoutClicked()">Disconnetti</button>
+                <button onclick="onOpenPdfFolderClicked()">Apri cartella PDF</button>
                 <h3>Aiuto</h3>
                 <button onclick="onDocumentationClicked()">Documentazione</button>
                 <button onclick="onContactSupportClicked()">Contatta il supporto</button>

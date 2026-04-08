@@ -41,6 +41,18 @@ def _save_uploaded_asset(app, file_storage, relative_folder: str) -> str:
     return os.path.relpath(destination, app.root_path)
 
 
+def _save_background_image(app, file_storage) -> str:
+    """Save background image as user/background.jpeg under project root."""
+    if not file_storage or not getattr(file_storage, "filename", ""):
+        return ""
+
+    user_dir = os.path.join(app.root_path, "user")
+    os.makedirs(user_dir, exist_ok=True)
+    destination = os.path.join(user_dir, "background.jpeg")
+    file_storage.save(destination)
+    return os.path.relpath(destination, app.root_path)
+
+
 def _extract_module_script_path(fxml_path: str) -> str:
     """Return the full script path under forms/scripts for a form, if present."""
     try:
@@ -105,6 +117,32 @@ def _run_module_script(app, form_name: str, script_path: str, submitted_values: 
         return warning
 
 
+def _open_folder_in_file_manager(path: str) -> bool:
+    """Try to open a folder with the OS graphical file manager."""
+    if not os.path.isdir(path):
+        return False
+
+    try:
+        if sys.platform.startswith("win"):
+            os.startfile(path)  # type: ignore[attr-defined]
+            return True
+
+        if sys.platform == "darwin":
+            subprocess.Popen(["open", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True
+
+        # Linux and other POSIX desktops
+        if os.name == "posix":
+            if not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
+                return False
+            subprocess.Popen(["xdg-open", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return True
+    except Exception:
+        return False
+
+    return False
+
+
 def register_web_routes(app):
     """@brief Registra tutte le route web HTML dell'applicazione.
 
@@ -123,6 +161,12 @@ def register_web_routes(app):
         """
         return render_template("index.html")
 
+    @app.route("/user/<path:filename>")
+    def user_asset(filename: str):
+        """Serve files from the project user directory."""
+        user_dir = os.path.join(app.root_path, "user")
+        return send_from_directory(user_dir, filename)
+
     @app.route("/admin")
     @login_required
     def admin():
@@ -138,7 +182,62 @@ def register_web_routes(app):
                 if file.endswith(".fxml"):
                     forms.append(os.path.basename(file).split(".")[0])
 
-        return render_template("admin.html", forms=forms)
+        return render_template(
+            "admin.html", 
+            forms=forms,
+        )
+    
+    @app.route("/admin/open_pdf_folder")
+    @login_required
+    def open_pdf_folder():
+        """@brief Apre la cartella PDF nel file manager grafico del sistema.
+
+        @return Redirect ad admin in caso di apertura riuscita, oppure alla pagina lista PDF.
+
+        @details
+        Prova ad aprire la cartella su Windows/Linux/macOS. Se non disponibile
+        (ambiente headless, comando assente o errore), mostra un elenco browser dei PDF.
+        """
+        pdf_dir = os.path.join(app.root_path, app.config.get("PDF_PATH", "pdfs"))
+
+        if _open_folder_in_file_manager(pdf_dir):
+            return redirect(url_for("admin", message="Cartella PDF aperta nel file manager", message_type="success"))
+
+        return redirect(url_for("pdf_files_browser", message="Apertura grafica non disponibile: mostro elenco file", message_type="warning"))
+
+    @app.route("/admin/pdfs")
+    @login_required
+    def pdf_files_browser():
+        """Show generated PDF files in a browser-friendly list."""
+        pdf_dir = os.path.join(app.root_path, app.config.get("PDF_PATH", "pdfs"))
+        files = []
+
+        if os.path.isdir(pdf_dir):
+            for entry in os.listdir(pdf_dir):
+                file_path = os.path.join(pdf_dir, entry)
+                if not os.path.isfile(file_path):
+                    continue
+                if not entry.lower().endswith(".pdf"):
+                    continue
+
+                stat = os.stat(file_path)
+                files.append(
+                    {
+                        "name": entry,
+                        "size": stat.st_size,
+                        "mtime": stat.st_mtime,
+                    }
+                )
+
+        files.sort(key=lambda item: item["mtime"], reverse=True)
+
+        return render_template(
+            "pdf_files.html",
+            files=files,
+            pdf_dir=pdf_dir,
+            message=request.args.get("message", ""),
+            message_type=request.args.get("message_type", ""),
+        )
 
     @app.route("/admin/settings")
     @login_required
@@ -173,7 +272,7 @@ def register_web_routes(app):
         app_settings["personalization"]["secondary_color"] = (request.form.get("secondary_color", "") or "").strip()
 
         logo_path = _save_uploaded_asset(app, request.files.get("logo_image"), os.path.join("static", "uploads", "branding"))
-        background_path = _save_uploaded_asset(app, request.files.get("background_image"), os.path.join("static", "uploads", "branding"))
+        background_path = _save_background_image(app, request.files.get("background_image"))
 
         if logo_path:
             app_settings["entity"]["logo_image"] = logo_path

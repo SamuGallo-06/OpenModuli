@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PDF Generati - OpenModuli</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    </head>
+    <body style="--primary-color: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --primary-color-dark: {{ config.get('PRIMARY_COLOR', '#1d4ed8') }}; --secondary-color: {{ config.get('SECONDARY_COLOR', '#4b5563') }};">
+        <main class="container">
+            <header>
+                <h1>PDF Generati</h1>
+                <p style="color: #4b5563; margin-top: 8px;">Directory: {{ pdf_dir }}</p>
+            </header>
+
+            {% if message %}
+                {% if message_type == 'success' %}
+                <div style="margin: 12px 0 20px 0; padding: 12px 14px; border-radius: 8px; border: 1px solid #16a34a; background: #f0fdf4; color: #166534;">
+                    {{ message }}
+                </div>
+                {% elif message_type == 'warning' %}
+                <div style="margin: 12px 0 20px 0; padding: 12px 14px; border-radius: 8px; border: 1px solid #d97706; background: #fffbeb; color: #92400e;">
+                    {{ message }}
+                </div>
+                {% else %}
+                <div style="margin: 12px 0 20px 0; padding: 12px 14px; border-radius: 8px; border: 1px solid #6b7280; background: #f9fafb; color: #374151;">
+                    {{ message }}
+                </div>
+                {% endif %}
+            {% endif %}
+
+            {% if files %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: #f3f4f6; text-align: left;">
+                            <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">File</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Dimensione (byte)</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Ultima modifica</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Azione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for file in files %}
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ file.name }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ file.size }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{{ file.mtime | int }}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">
+                                <a href="{{ url_for('download_generated_pdf', filename=file.name) }}">Scarica</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>Nessun PDF trovato nella cartella configurata.</p>
+            {% endif %}
+
+            <div style="margin-top: 20px;">
+                <a href="{{ url_for('admin') }}">Torna ad Admin</a>
+            </div>
+        </main>
+    </body>
+</html>

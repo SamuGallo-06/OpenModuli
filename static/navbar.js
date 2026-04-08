@@ -71,3 +71,7 @@ function onLicenceClicked(){
 function onAboutClicked(){
     window.location.href = '/about/about';
 }
+
+function onOpenPdfFolderClicked(){
+    window.location.href = '/admin/open_pdf_folder';
+}
