@@ -17,7 +17,15 @@ from settings import sync_app_config
 from xmlutils import parse_fxml
 
 from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir
+from rich.console import Console
 
+console = Console()
+
+def init():
+    global console
+    console = Console()
+    console.print("[blue][INFO][/blue] Web routes module initialized")
+    
 def _template_message_context() -> dict:
     return {
         "settings_data": get_all_settings(),
@@ -202,7 +210,7 @@ def register_web_routes(app):
 
         if _open_folder_in_file_manager(pdf_dir):
             return redirect(url_for("admin", message="Cartella PDF aperta nel file manager", message_type="success"))
-
+        console.print("[green][ACTION][/green] Attempt to open PDF folder in file manager failed, showing PDF list in browser instead")
         return redirect(url_for("pdf_files_browser", message="Apertura grafica non disponibile: mostro elenco file", message_type="warning"))
 
     @app.route("/admin/pdfs")
@@ -230,7 +238,7 @@ def register_web_routes(app):
                 )
 
         files.sort(key=lambda item: item["mtime"], reverse=True)
-
+        console.print("[green][ACTION][/green] PDF files listed for browser download")
         return render_template(
             "pdf_files.html",
             files=files,
@@ -281,7 +289,7 @@ def register_web_routes(app):
 
         persist_settings()
         sync_app_config(app)
-
+        console.print("[green][ACTION][/green] Settings saved by admin user '%s'", current_user.username)
         return redirect(url_for("settings", message="Impostazioni salvate con successo", message_type="success"))
 
     @app.route("/admin/settings/change-psswd", methods=["POST"])
@@ -303,25 +311,25 @@ urce /path/completo/a/openmoduli/venv/bin/activate
 
         db_user = User.query.get(current_user.id)
         if db_user is None:
-            print("[SETTINGS] Failed to change password: user session is stale")
+            console.print("[red][ERROR][/red] Failed to change password: user session is stale")
             message = "Sessione utente non valida"
             message_type = "error"
         elif not db_user.check_password(old_password):
-            print("[SETTINGS] Failed to change password: current password is incorrect")
+            console.print("[red][ERROR][/red] Failed to change password: current password is incorrect")
             message = "Password corrente non valida"
             message_type = "error"
         elif not new_password:
-            print("[SETTINGS] Failed to change password: new password is empty")
+            console.print("[red][ERROR][/red] Failed to change password: new password is empty")
             message = "La nuova password non puo essere vuota"
             message_type = "error"
         elif new_password != new_password_confirm:
-            print("[SETTINGS] Failed to change password: new password and confirmation do not match")
+            console.print("[red][ERROR][/red] Failed to change password: new password and confirmation do not match")
             message = "La nuova password e la conferma non coincidono"
             message_type = "error"
         else:
             db_user.set_password(new_password)
             db.session.commit()
-            print("[SETTINGS] Password changed successfully")
+            console.print("[green][ACTION][/green] Password changed successfully")
 
         return redirect(url_for("settings", message=message, message_type=message_type))
 
@@ -339,8 +347,10 @@ urce /path/completo/a/openmoduli/venv/bin/activate
             password = request.form.get("password", "")
             user = User.query.filter_by(username=username).first()
             if not user or not user.is_active or not user.check_password(password):
+                console.print("[red][ERROR][/red] Failed login attempt for user '%s'", username)
                 return render_template("login.html", error="Invalid password")
             login_user(user, remember=True)
+            console.print("[green][ACTION][/green] User logged in successfully: '%s'", username)
             return redirect(url_for("admin"))
 
         return render_template("login.html")
@@ -349,6 +359,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
     @login_required
     def logout():
         logout_user()
+        console.print("[yellow][LOGOUT][/yellow] User logged out successfully: '%s'", current_user.username)
         return redirect(url_for("login"))
 
     @app.route("/form/<form_name>", methods=["GET", "POST"])
@@ -380,11 +391,14 @@ urce /path/completo/a/openmoduli/venv/bin/activate
             ## Executing associated script if defined in the form
             script_path = _extract_module_script_path(fxml_path)
             if script_path:
-                app.logger.info("[FORM] Script collegato al modulo '%s': %s", form_name, script_path)
+                app.logger.info("[FORM] A script was found attached to '%s': %s", form_name, script_path)
+                console.print("[blue][INFO][/blue] A script was found attached to form '%s': %s", form_name, script_path)
+                console.print("[green][ACTION][/green] Executing script attached to form '%s'", form_name)
                 script_warning = _run_module_script(app, form_name, script_path, submitted_values)
             else:
-                app.logger.info("[FORM] Nessun script collegato al modulo '%s'", form_name)
-            
+                console.print("[blue][INFO][/blue] No script attached to form '%s'", form_name)
+                app.logger.info("[FORM] No script attached to '%s'", form_name)
+            console.print("[green][ACTION][/green] Form submitted successfully: '%s'", form_name)
             ## Generating PDF result from submitted form data
             pdf_result = create_pdf_from_form_data(
                 form_name,
@@ -420,6 +434,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         @param filename Nome file PDF richiesto.
         @return Risposta file come allegato.
         """
+        console.print("[green][ACTION][/green] PDF download requested: %s", filename)
         pdf_dir = os.path.join(app.root_path, app.config.get("PDF_PATH", "pdfs"))
         return send_from_directory(pdf_dir, filename, as_attachment=True)
 
@@ -434,6 +449,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         Valida nome logico modulo e verifica estensione `.fxml`.
         """
         file = request.files["fxml_file"]
+        console.print("[green][ACTION][/green] Uploading '%s'...", file.filename, end="")
         try:
             name = normalize_form_name(request.form["name"])
         except ValueError:
@@ -447,7 +463,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
         dest = form_path_from_dir(forms_dir, name)
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         file.save(dest)
-
+        console.print("[green]Done![/green]")
         return redirect(url_for("form_view", form_name=name))
 
     @app.route("/create_form", methods=["GET", "POST"])
