@@ -1,0 +1,4 @@
+{% set logo = config.get('ENTITY_LOGO', '') %}
+{% if logo and logo.startswith('static/') %}
+    <img src="{{ url_for('static', filename=logo[7:]) }}" alt="Logo" class="organization-logo-watermark" style="max-width:120px;margin:0 auto 12px auto;" />
+{% endif %}

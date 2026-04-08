@@ -271,3 +271,10 @@ button.btn_success:hover {
 	border: 1px solid var(--border-color);
 }
 
+.organization-logo-watermark {
+	position: fixed;
+	top: 1%;
+	left: 1%;
+	pointer-events: none;
+}
+

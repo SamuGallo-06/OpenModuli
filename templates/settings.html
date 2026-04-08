@@ -26,10 +26,7 @@
         -->
         <main class="container">
             <header>
-                {% set logo = config.get('ENTITY_LOGO', '') %}
-                {% if logo and logo.startswith('static/') %}
-                    <img src="{{ url_for('static', filename=logo[7:]) }}" alt="Logo" class="asset-image" style="max-width:120px;margin:0 auto 12px auto;" />
-                {% endif %}
+                {% include 'partials/logo.html' %}
                 <h1>Impostazioni - OpenModuli</h1>
             </header>
 
