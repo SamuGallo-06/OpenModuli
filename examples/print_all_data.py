@@ -6,6 +6,9 @@
 # Form data is given as input
 #
 
+"""
+standard definition for retrieving form data.
+"""
 import sys
 import json
 
@@ -14,6 +17,8 @@ data = json.loads(raw) if raw.strip() else {}
 
 form_name = data.get("form_name")
 values = data.get("values", {})
+
+"""end of standard definition"""
 
 print("Form:", form_name)
 print("Values:", values)
