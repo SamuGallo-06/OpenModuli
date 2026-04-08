@@ -8,3 +8,5 @@ instance/openmoduli.db
 *.pyc
 *.pyo
 static/uploads/
+user/
+user/background.jpeg
