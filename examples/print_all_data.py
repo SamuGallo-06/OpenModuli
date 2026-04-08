@@ -6,3 +6,14 @@
 # Form data is given as input
 #
 
+import sys
+import json
+
+raw = sys.stdin.read() # read raw JSON data from stdin
+data = json.loads(raw) if raw.strip() else {}
+
+form_name = data.get("form_name")
+values = data.get("values", {})
+
+print("Form:", form_name)
+print("Values:", values)
