@@ -179,3 +179,25 @@ dialog::backdrop {
   justify-content: flex-end;
   margin-top: 16px;
 }
+
+.ui-icon-button {
+  width: 48px;
+  height: auto;
+  position: inherit;
+  top: 2px;
+  right: 2%;
+  border: 2px solid #111;
+  border-radius: 10px;
+}
+
+.ui-icon-button:hover{
+  background-color: #547c5d;
+}
+
+.button-icon{
+  width: 24px;
+  height: 24px;
+  align-content: center;
+  vertical-align: middle;
+  background-color: transparent;
+}

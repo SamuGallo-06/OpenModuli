@@ -29,7 +29,12 @@
                 {% include 'partials/logo.html' %}
                 <h1>Impostazioni - OpenModuli</h1>
             </header>
-
+            <a href="{{ url_for('admin') }}">
+                <img src="{{ url_for('static', filename='icons/arrow-circle-left.png') }}" alt="Indietro" class="ui-icon-button" /> Indietro
+            </a>
+            <br/>
+            <hr/>
+            <br/>
             {% if message %}
                 <div class="banner banner-{{ message_type or 'info' }}">{{ message }}</div>
             {% endif %}

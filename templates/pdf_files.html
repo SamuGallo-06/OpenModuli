@@ -12,6 +12,12 @@
                 <h1>PDF Generati</h1>
                 <p style="color: #4b5563; margin-top: 8px;">Directory: {{ pdf_dir }}</p>
             </header>
+            <a href="{{ url_for('admin') }}">
+                <img src="{{ url_for('static', filename='icons/arrow-circle-left.png') }}" alt="Indietro" class="ui-icon-button" /> Indietro
+            </a>
+            <br/>
+            <hr/>
+            <br/>
 
             {% if message %}
                 {% if message_type == 'success' %}
