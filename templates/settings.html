@@ -65,6 +65,14 @@
                         <span>Email / Contatti: </span><input type="text" name="entity_contacts" value="{{ settings_data.get('entity', {}).get('entity_contacts', '') }}" /><br/>
                         <span>Telefono: </span><input type="text" name="entity_phone" value="{{ settings_data.get('entity', {}).get('entity_phone', '') }}" /><br/>
                     </section>
+                    <section title="Email">
+                        <span>Server: </span><input type="text" name="email_server" value="{{ settings_data.get('email', {}).get('server', '') }}" /><br/>
+                        <span>Porta: </span><input type="text" name="email_port" value="{{ settings_data.get('email', {}).get('port', '') }}" /><br/>
+                        <span>Usa SSL: </span><input type="checkbox" name="email_use_ssl" value="true" {% if settings_data.get('email', {}).get('use_ssl') %}checked{% endif %} /><br/>
+                        <span>Username: </span><input type="text" name="email_username" value="{{ settings_data.get('email', {}).get('username', '') }}" /><br/>
+                        <span>Password: </span><input type="password" name="email_password" value="{{ settings_data.get('email', {}).get('password', '') }}" /><br/>
+                        <span>Mittente predefinito: </span><input type="text" name="email_default_sender" value="{{ settings_data.get('email', {}).get('default_sender', '') }}" /><br/>
+                    </section>
                     <section title="Personalizzazione">
                         <span>Colore primario: </span><input type="color" name="primary_color" value="{{ settings_data.get('personalization', {}).get('primary_color', '') or '#1a3a4a' }}" /><br/>
                         <span>Colore secondario: </span><input type="color" name="secondary_color" value="{{ settings_data.get('personalization', {}).get('secondary_color', '') or '#555555' }}" /><br/>

@@ -44,6 +44,14 @@ DEFAULT_SETTINGS = {
         "secondary_color": "#4b5563",
         "background_image": "",
     },
+    "email": {
+        "server": "",
+        "port": "587",
+        "use_ssl": "false",
+        "username": "",
+        "password": "",
+        "default_sender": "",
+    },
     "access": {
         "current_password": "",
         "new_password": "",
@@ -64,6 +72,23 @@ def _stringify(value, fallback="") -> str:
     if value is None:
         return fallback
     return str(value)
+
+
+def _as_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
+
+
+def _as_int(value, fallback: int) -> int:
+    try:
+        return int(str(value).strip())
+    except (TypeError, ValueError):
+        return fallback
 
 
 def _ensure_settings_shape():
@@ -133,6 +158,7 @@ def _apply_app_config(app):
 
     paths_cfg = settings.get("paths", {})
     access_cfg = settings.get("access", {})
+    email_cfg = settings.get("email", {})
     entity_cfg = settings.get("entity", {})
     personalization_cfg = settings.get("personalization", {})
     general_cfg = settings.get("general", {})
@@ -140,6 +166,8 @@ def _apply_app_config(app):
     forms_path = _stringify(paths_cfg.get("forms_path") or DEFAULT_SETTINGS["paths"]["forms_path"]).strip()
     pdf_path = _stringify(paths_cfg.get("pdf_path") or DEFAULT_SETTINGS["paths"]["pdf_path"]).strip()
     admin_password_hash = _stringify(access_cfg.get("current_password")).strip()
+    email_port = _as_int(email_cfg.get("port") or DEFAULT_SETTINGS["email"]["port"], 587)
+    email_use_ssl = _as_bool(email_cfg.get("use_ssl") or DEFAULT_SETTINGS["email"]["use_ssl"])
 
     app.config["FORMS_PATH"] = forms_path
     app.config["PDF_PATH"] = pdf_path
@@ -155,6 +183,13 @@ def _apply_app_config(app):
     app.config["PRIMARY_COLOR"] = _stringify(personalization_cfg.get("primary_color") or DEFAULT_SETTINGS["personalization"]["primary_color"]).strip()
     app.config["SECONDARY_COLOR"] = _stringify(personalization_cfg.get("secondary_color") or DEFAULT_SETTINGS["personalization"]["secondary_color"]).strip()
     app.config["BACKGROUND_IMAGE"] = _stringify(personalization_cfg.get("background_image") or DEFAULT_SETTINGS["personalization"]["background_image"]).strip()
+    # Email settings are optional and can be left blank to disable email features.
+    app.config['MAIL_SERVER'] = _stringify(email_cfg.get("server") or DEFAULT_SETTINGS["email"]["server"]).strip()
+    app.config['MAIL_PORT'] = email_port
+    app.config['MAIL_USE_SSL'] = email_use_ssl
+    app.config['MAIL_USERNAME'] = _stringify(email_cfg.get("username") or DEFAULT_SETTINGS["email"]["username"]).strip()
+    app.config['MAIL_PASSWORD'] = _stringify(email_cfg.get("password") or DEFAULT_SETTINGS["email"]["password"]).strip()
+    app.config['MAIL_DEFAULT_SENDER'] = _stringify(email_cfg.get("default_sender") or DEFAULT_SETTINGS["email"]["default_sender"]).strip()
 
     try:
         from pdfutils import set_program_name, set_pdf_path, set_branding

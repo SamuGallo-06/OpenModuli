@@ -19,7 +19,7 @@ import os
 from flask import Flask
 from rich.console import Console
 from time import sleep
-from extensions import db, login_manager
+from extensions import db, login_manager, mail
 from models.user import User
 import click
 from flask_mail import Mail, Message
@@ -52,14 +52,16 @@ app = Flask(__name__)
 console.print("[blue][INFO][/blue] Inizializzazione database...")
 sleep(0.5)
 
-mail = Mail(app)
-
 # Configurazione
 app.config['SECRET_KEY'] = 'b7bc08cb7271bf6cd4d6f53a6a9f230f27428971f6e33eea95c33ac853f760cc'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///openmoduli.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+
+console.print("[blue][INFO][/blue] Inizializzazione servizio email...")
+sleep(0.5)
+mail.init_app(app)
 
 console.print("[blue][INFO][/blue] Inizializzazione login manager...")
 sleep(0.5)

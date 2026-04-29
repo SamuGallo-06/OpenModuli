@@ -283,6 +283,7 @@ def register_web_routes(app):
         app_settings.setdefault("paths", {})
         app_settings.setdefault("entity", {})
         app_settings.setdefault("personalization", {})
+        app_settings.setdefault("email", {})
         app_settings.setdefault("access", {})
 
         app_settings["general"]["language"] = (request.form.get("language", "it") or "it").strip() or "it"
@@ -294,6 +295,12 @@ def register_web_routes(app):
         app_settings["entity"]["entity_phone"] = (request.form.get("entity_phone", "") or "").strip()
         app_settings["personalization"]["primary_color"] = (request.form.get("primary_color", "") or "").strip()
         app_settings["personalization"]["secondary_color"] = (request.form.get("secondary_color", "") or "").strip()
+        app_settings["email"]["server"] = (request.form.get("email_server", "") or "").strip()
+        app_settings["email"]["port"] = (request.form.get("email_port", "587") or "587").strip() or "587"
+        app_settings["email"]["use_ssl"] = "true" if request.form.get("email_use_ssl") == "true" else "false"
+        app_settings["email"]["username"] = (request.form.get("email_username", "") or "").strip()
+        app_settings["email"]["password"] = (request.form.get("email_password", "") or "").strip()
+        app_settings["email"]["default_sender"] = (request.form.get("email_default_sender", "") or "").strip()
 
         logo_path = _save_uploaded_asset(app, request.files.get("logo_image"), os.path.join("static", "uploads", "branding"))
         background_path = _save_background_image(app, request.files.get("background_image"))
