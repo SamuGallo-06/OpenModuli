@@ -40,7 +40,7 @@
                         <button id="toggle-editor-mode" type="button">Passa a editor Visuale</button>
                         <label class="name-input-wrap" for="form-name-input">
                             Nome modulo
-                            <input id="form-name-input" type="text" placeholder="es. iscrizione_evento" value="{{ form_name or '' }}" />
+                            <input id="form-name-input" type="text" placeholder="es. iscrizione_evento" value="{{ form_filename or '' }}" />
                         </label>
                     </div>
 
@@ -52,7 +52,7 @@
                         <div class="visual-form-settings">
                             <label>
                                 Titolo form
-                                <input id="visual-form-title" type="text" placeholder="Titolo" />
+                                <input id="visual-form-title" type="text" placeholder="Titolo" value="{{ form_name or '' }}" />
                             </label>
                             <label>
                                 Testo pulsante invio

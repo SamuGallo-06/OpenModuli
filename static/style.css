@@ -278,3 +278,13 @@ button.btn_success:hover {
 	pointer-events: none;
 }
 
+.ui-icon-button {
+  width: 32px;
+  height: auto;
+  position: inherit;
+  top: 2px;
+  right: 2%;
+  border: 2px solid #111;
+  border-radius: 10px;
+}
+

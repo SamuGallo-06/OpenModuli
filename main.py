@@ -22,6 +22,7 @@ from time import sleep
 from extensions import db, login_manager
 from models.user import User
 import click
+from flask_mail import Mail, Message
 
 from pdfutils import set_program_name
 from routes.fxml_api_routes import register_fxml_api_routes
@@ -50,6 +51,8 @@ sleep(0.5)
 app = Flask(__name__)
 console.print("[blue][INFO][/blue] Inizializzazione database...")
 sleep(0.5)
+
+mail = Mail(app)
 
 # Configurazione
 app.config['SECRET_KEY'] = 'b7bc08cb7271bf6cd4d6f53a6a9f230f27428971f6e33eea95c33ac853f760cc'

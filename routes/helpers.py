@@ -27,6 +27,11 @@ FORM_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 def normalize_form_name(form_name: str) -> str:
     """Normalize and validate a form name."""
     normalized = (form_name or "").strip()
+    normalized = normalized.replace(" ", "_")
+    normalized = normalized.replace(".", "_")
+    normalized = normalized.replace("/", "_")
+    normalized = normalized.replace("\\", "_")
+    normalized = normalized.lower()
     if not normalized or not FORM_NAME_RE.fullmatch(normalized):
         raise ValueError("Nome modulo non valido")
     return normalized

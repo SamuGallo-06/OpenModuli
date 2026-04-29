@@ -498,11 +498,11 @@ urce /path/completo/a/openmoduli/venv/bin/activate
 
         try:
             if name:
-                name = normalize_form_name(name)
+                filename = normalize_form_name(name)
         except ValueError:
-            name = ""
+            filename = ""
 
-        return render_template("form_creator.html", form_name=name)
+        return render_template("form_creator.html", form_name=name, form_filename=filename)
 
     @app.route("/about/license")
     def license_view():
