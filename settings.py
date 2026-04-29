@@ -48,6 +48,7 @@ DEFAULT_SETTINGS = {
         "server": "",
         "port": "587",
         "use_ssl": "false",
+        "use_tls": "false",
         "username": "",
         "password": "",
         "default_sender": "",
@@ -168,6 +169,7 @@ def _apply_app_config(app):
     admin_password_hash = _stringify(access_cfg.get("current_password")).strip()
     email_port = _as_int(email_cfg.get("port") or DEFAULT_SETTINGS["email"]["port"], 587)
     email_use_ssl = _as_bool(email_cfg.get("use_ssl") or DEFAULT_SETTINGS["email"]["use_ssl"])
+    email_use_tls = _as_bool(email_cfg.get("use_tls") or DEFAULT_SETTINGS["email"]["use_tls"])
 
     app.config["FORMS_PATH"] = forms_path
     app.config["PDF_PATH"] = pdf_path
@@ -187,6 +189,7 @@ def _apply_app_config(app):
     app.config['MAIL_SERVER'] = _stringify(email_cfg.get("server") or DEFAULT_SETTINGS["email"]["server"]).strip()
     app.config['MAIL_PORT'] = email_port
     app.config['MAIL_USE_SSL'] = email_use_ssl
+    app.config['MAIL_USE_TLS'] = email_use_tls
     app.config['MAIL_USERNAME'] = _stringify(email_cfg.get("username") or DEFAULT_SETTINGS["email"]["username"]).strip()
     app.config['MAIL_PASSWORD'] = _stringify(email_cfg.get("password") or DEFAULT_SETTINGS["email"]["password"]).strip()
     app.config['MAIL_DEFAULT_SENDER'] = _stringify(email_cfg.get("default_sender") or DEFAULT_SETTINGS["email"]["default_sender"]).strip()

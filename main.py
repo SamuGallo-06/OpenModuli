@@ -59,10 +59,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
-console.print("[blue][INFO][/blue] Inizializzazione servizio email...")
-sleep(0.5)
-mail.init_app(app)
-
 console.print("[blue][INFO][/blue] Inizializzazione login manager...")
 sleep(0.5)
 login_manager.init_app(app)
@@ -180,6 +176,9 @@ def open_moduli_init():
     console.print("[blue][INFO][/blue] Caricamento delle rotte API...")
     sleep(0.5)
     register_fxml_api_routes(app)
+    console.print("[blue][INFO][/blue] Inizializzazione servizio email...")
+    sleep(0.5)
+    mail.init_app(app)
     
 if __name__ == "__main__":
     console.print("[green][INFO][/green] Avvio...")

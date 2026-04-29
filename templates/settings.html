@@ -42,13 +42,16 @@
             <div>
                 <form action="{{ url_for('save_settings') }}" method="POST" enctype="multipart/form-data">
                     <section title="Generali">
+                        <p><strong>Generali</strong></p>
                         <span>Lingua: </span><input type="text" name="language" value="{{ settings_data.get('general', {}).get('language', 'it') }}" /><br/>
                     </section>
                     <section title="Percorsi">
+                        <p><strong>Percorsi</strong></p>
                         <span>Percorso dei moduli: </span><input type="text" name="forms_path" value="{{ settings_data.get('paths', {}).get('forms_path', 'forms') }}" /><br/>
                         <span>Percorso dei PDF: </span><input type="text" name="pdf_path" value="{{ settings_data.get('paths', {}).get('pdf_path', 'pdfs') }}" /><br/>
                     </section>
                     <section title="Informazioni Ente">
+                        <p><strong>Informazioni sull'Ente</strong></p>
                         <span>Logo: </span><input type="file" name="logo_image"/>
                         {% set logo_value = settings_data.get('entity', {}).get('logo_image', '') %}
                         {% if logo_value %}
@@ -66,14 +69,17 @@
                         <span>Telefono: </span><input type="text" name="entity_phone" value="{{ settings_data.get('entity', {}).get('entity_phone', '') }}" /><br/>
                     </section>
                     <section title="Email">
+                        <p><strong>Configurazione Email</strong></p>
                         <span>Server: </span><input type="text" name="email_server" value="{{ settings_data.get('email', {}).get('server', '') }}" /><br/>
                         <span>Porta: </span><input type="text" name="email_port" value="{{ settings_data.get('email', {}).get('port', '') }}" /><br/>
-                        <span>Usa SSL: </span><input type="checkbox" name="email_use_ssl" value="true" {% if settings_data.get('email', {}).get('use_ssl') %}checked{% endif %} /><br/>
+                        <span>Usa SSL: </span><input type="checkbox" name="email_use_ssl" value="true" {% if settings_data.get('email', {}).get('use_ssl', '') == 'true' %}checked{% endif %} /><br/>
+                        <span>Usa TLS: </span><input type="checkbox" name="email_use_tls" value="true" {% if settings_data.get('email', {}).get('use_tls', '') == 'true' %}checked{% endif %} /><br/>
                         <span>Username: </span><input type="text" name="email_username" value="{{ settings_data.get('email', {}).get('username', '') }}" /><br/>
                         <span>Password: </span><input type="password" name="email_password" value="{{ settings_data.get('email', {}).get('password', '') }}" /><br/>
                         <span>Mittente predefinito: </span><input type="text" name="email_default_sender" value="{{ settings_data.get('email', {}).get('default_sender', '') }}" /><br/>
                     </section>
                     <section title="Personalizzazione">
+                        <p><strong>Personalizzazione</strong></p>
                         <span>Colore primario: </span><input type="color" name="primary_color" value="{{ settings_data.get('personalization', {}).get('primary_color', '') or '#1a3a4a' }}" /><br/>
                         <span>Colore secondario: </span><input type="color" name="secondary_color" value="{{ settings_data.get('personalization', {}).get('secondary_color', '') or '#555555' }}" /><br/>
                         <span>Immagine di Sfondo: </span><input type="file" name="background_image" />
@@ -100,6 +106,7 @@
             <div>
                 <form action="{{ url_for('change_password') }}" method="POST" enctype="multipart/form-data">
                     <section title="Password">
+                        <p><strong>Cambia password</strong></p>
                         <span>Password attuale: </span><input type="password" name="current_password"/><br/>
                         <span>Nuova Password: </span><input type="password" name="new_password"/><br/>
                         <span>Conferma Password: </span><input type="password" name="confirm_password"/><br/>

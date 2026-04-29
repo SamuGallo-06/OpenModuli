@@ -21,6 +21,12 @@
                 <p style="margin: 8px 0 0 0; font-size: 0.95em;">{{ script_warning }}</p>
             </div>
             {% endif %}
+            {% if email_warning %}
+            <div class="warning-message" style="background-color: #fff3cd; border: 1px solid #ffe69c; color: #664d03; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+                <strong>⚠ Avviso email</strong>
+                <p style="margin: 8px 0 0 0; font-size: 0.95em;">{{ email_warning }}</p>
+            </div>
+            {% endif %}
             {% if pdf_result and pdf_result.success %}
             <div class="success-message" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
                 <strong>✓ {{ form_attributes.get('confirmation_text', 'Grazie per aver inviato il modulo!') }}</strong>

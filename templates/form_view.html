@@ -15,12 +15,6 @@
         <main class="container">
             <header>
                 <h1>{{ form_attributes.get('title', form_name) }}</h1>
-                <p style="font-size: 0.9em; color: #555; margin-top: 10px;">
-                    <span>|</span>
-                    <strong>Versione:</strong> {{ form_attributes.get('version', '-') }}
-                    <span>|</span>
-                    <strong>Lingua:</strong> {{ form_attributes.get('lang', '-') }}<br/><br/>
-                </p>
             </header>
             {% macro render_nodes(nodes) %}
                 {% for node in nodes %}

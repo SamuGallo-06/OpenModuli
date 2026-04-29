@@ -24,16 +24,20 @@ from flask import abort, redirect, render_template, request, send_from_directory
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
-from extensions import db
+from extensions import db, mail
 from models.user import User
 from pdfutils import create_pdf_from_form_data
 from settings import get_all_settings, save_settings as persist_settings
 from settings import settings as app_settings
 from settings import sync_app_config
 from xmlutils import parse_fxml
+from email_utils import send_email, send_email_with_attachment, build_email_body
 
 from routes.helpers import form_path_from_dir, normalize_form_name, resolve_forms_dir
 from rich.console import Console
+
+import logging
+logger = logging.getLogger(__name__)
 
 console = Console()
 
@@ -298,6 +302,7 @@ def register_web_routes(app):
         app_settings["email"]["server"] = (request.form.get("email_server", "") or "").strip()
         app_settings["email"]["port"] = (request.form.get("email_port", "587") or "587").strip() or "587"
         app_settings["email"]["use_ssl"] = "true" if request.form.get("email_use_ssl") == "true" else "false"
+        app_settings["email"]["use_tls"] = "true" if request.form.get("email_use_tls") == "true" else "false"
         app_settings["email"]["username"] = (request.form.get("email_username", "") or "").strip()
         app_settings["email"]["password"] = (request.form.get("email_password", "") or "").strip()
         app_settings["email"]["default_sender"] = (request.form.get("email_default_sender", "") or "").strip()
@@ -376,8 +381,6 @@ urce /path/completo/a/openmoduli/venv/bin/activate
             console.print("[green][ACTION][/green] User logged in successfully: '%s'", username)
             return redirect(url_for("admin"))
 
-        return render_template("login.html")
-
     @app.route("/logout", methods=["GET"])
     @login_required
     def logout():
@@ -410,6 +413,7 @@ urce /path/completo/a/openmoduli/venv/bin/activate
 
         if request.method == "POST":
             script_warning = ""
+            email_warning = ""
 
             ## Executing associated script if defined in the form
             script_path = _extract_module_script_path(fxml_path)
@@ -430,12 +434,44 @@ urce /path/completo/a/openmoduli/venv/bin/activate
                 submitted_values,
             )
 
+            # Extract submitter metadata (fields declared in the template, not in the FXML)
+            submitter_name = submitted_values.get("nome_compilante") or form_data.get("nome_compilante")
+            submitter_surname = submitted_values.get("cognome_compilante") or form_data.get("cognome_compilante")
+            submitter_email = submitted_values.get("email_compilante") or form_data.get("email_compilante")
+
+            # Ensure values are available in form_data for downstream use (PDF, email, logs)
+            if submitter_name is not None:
+                form_data["nome_compilante"] = submitter_name
+            if submitter_surname is not None:
+                form_data["cognome_compilante"] = submitter_surname
+            if submitter_email is not None:
+                form_data["email_compilante"] = submitter_email
+
+            entity_name = app.config.get('ENTITY_NAME', 'OpenModuli')
+            subject = f"[{entity_name} tramite OpenModuli] Conferma ricezione modulo"
+            email_body = build_email_body(submitter_name, submitter_surname, form_name, entity_name)
+            pdf_path = pdf_result["pdf_path"]
+            print("=== EMAIL DEBUG ===")
+            print(f"SERVER: '{app.config.get('MAIL_SERVER')}'")
+            print(f"PORT: {app.config.get('MAIL_PORT')} ({type(app.config.get('MAIL_PORT'))})")
+            print(f"USE_SSL: {app.config.get('MAIL_USE_SSL')}")
+            print(f"USE_TLS: {app.config.get('MAIL_USE_TLS')}")
+            print(f"USERNAME: '{app.config.get('MAIL_USERNAME')}'")
+            print("==================")
+
+            email_sent, email_error = send_email_with_attachment(mail, subject, [submitter_email], email_body, pdf_path)
+            if not email_sent:
+                email_warning = "L'email di conferma non e stata inviata."
+                if email_error:
+                    app.logger.warning("[FORM] Email send failed for '%s': %s", form_name, email_error)
+
             return render_template(
                 "form_result.html",
                 form_name=form_name,
                 form_attributes=form_attributes,
                 pdf_result=pdf_result,
                 script_warning=script_warning,
+                email_warning=email_warning,
             )
 
         return render_template(
