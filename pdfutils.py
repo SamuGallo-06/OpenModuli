@@ -129,12 +129,12 @@ def create_pdf_from_form_data(
     """
     try:
         pdfs_dir = _ensure_pdfs_dir()
-        
+        os.makedirs(os.path.join(pdfs_dir, form_name), exist_ok=True)
         # Create filename with timestamp and compiler identity from submitted form values.
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         compiler_identity = _extract_compiler_identity(submitted_values or {})
         pdf_filename = f"{form_name}_{compiler_identity}_{timestamp}.pdf"
-        pdf_path = os.path.join(pdfs_dir, pdf_filename)
+        pdf_path = os.path.join(pdfs_dir, form_name, pdf_filename)
         
         # Create PDF document
         doc = SimpleDocTemplate(
@@ -230,7 +230,7 @@ def create_pdf_from_form_data(
             "success": True,
             "pdf_path": pdf_path,
             "pdf_filename": pdf_filename,
-            "pdf_url": f"/pdfs/{pdf_filename}",
+            "pdf_url": f"/pdfs/{form_name}/{pdf_filename}",
             "error": None,
         }
         

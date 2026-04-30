@@ -3,8 +3,12 @@ forms/
 .venv/
 venv/
 __pycache__/
+__pycache__/*
 settings/
 instance/openmoduli.db
 static/uploads/
 user/
 user/background.jpeg
+__pycache__/pdfutils.cpython-312.pyc
+__pycache__/utils.cpython-312.pyc
+__pycache__/xmlutils.cpython-312.pyc
